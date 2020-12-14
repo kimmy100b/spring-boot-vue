@@ -1,4 +1,3 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/maven,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,intellij
 
@@ -77,10 +76,10 @@ fabric.properties
 
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
-
+.idea/
 # *.iml
 # modules.xml
-# .idea/misc.xml
+.idea/misc.xml
 # *.ipr
 
 # Sonarlint plugin
@@ -119,3 +118,17 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/maven,intellij
+
+# Created by https://www.toptal.com/developers/gitignore/api/vue
+# Edit at https://www.toptal.com/developers/gitignore?templates=vue
+
+### Vue ###
+# gitignore template for Vue.js projects
+#
+# Recommended template: Node.gitignore
+
+docs/_book
+
+test/
+
+# End of https://www.toptal.com/developers/gitignore/api/vue
