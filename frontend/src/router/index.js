@@ -3,7 +3,9 @@ import Router from 'vue-router'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import Index from '@/components/Index'
+
+import Index from '../components/Index'
+import RouterTest from '../components/RouterTest'
 
 Vue.use(Router)
 
@@ -18,6 +20,11 @@ export default new Router({
       path: '/',
       name: 'Index',
       component: Index
+    },
+    {
+      path: '/RouterTest',
+      name: 'RouterTest',
+      component: RouterTest
     }
   ]
 })

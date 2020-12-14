@@ -6,11 +6,21 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item href="#">Link</b-nav-item>
-          <b-nav-item href="#" disabled>Disabled</b-nav-item>
+        <b-navbar-nav
+          v-for="menu in menus"
+          :key="menu.id"
+        >
+          <b-nav-item
+            @click="selectMenu(menu)"
+          >
+              {{menu.name}}
+          </b-nav-item>
         </b-navbar-nav>
-
+        <b-navbar-nav>
+          <b-nav-item to="/RouterTest">
+            Router Test
+          </b-nav-item>
+        </b-navbar-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-form>
@@ -36,20 +46,46 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+    <component
+      :is="activeMenu.component"
+    ></component>
   </div>
 </template>
 
 <script>
+import Test1 from '../components/Test1.vue'
+import Test2 from '../components/Test2.vue'
+
 export default {
-  name: `Index`,
+  name: 'Index',
   data () {
     return {
-      msg: 'Welcome to Web Site'
+      menus: [],
+      activeMenu: undefined,
+    }
+  },
+  created () {
+    this.menus.push(
+      {
+        id: 'Test1',
+        name: 'Test1',
+        component: Test1
+      },
+      {
+        id: 'Test2',
+        name: 'Test2',
+        component: Test2
+      }
+    )
+    this.activeMenu = this.menus[0]
+  },
+  methods: {
+    selectMenu (menu) {
+      this.activeMenu = menu
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>
