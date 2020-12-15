@@ -53,6 +53,7 @@ export default {
     onSubmit (evt) {
       // 제출했을 떄 이벤트
       evt.preventDefault()
+      // axios.post('/api/data', {title: "vue.js는 조으다."}) .then(res => { console.log(res.data) })
       alert(JSON.stringify(this.form))
     },
     onReset (evt) {

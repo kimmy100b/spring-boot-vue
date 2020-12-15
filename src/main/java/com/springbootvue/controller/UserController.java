@@ -1,20 +1,19 @@
 package com.springbootvue.controller;
 
-import java.util.List;
-
 import com.springbootvue.dao.UserDAO;
 import com.springbootvue.dto.UserDTO;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 //@MapperScan(basePackages="com.springbootvue.dao")//탐색할 패키시 설정
 public class UserController {
 
-    private UserDAO userDAO; //UserDAO bean을 자동으로 주입
+    final private UserDAO userDAO; //UserDAO bean을 자동으로 주입
 
     @Autowired
     public UserController(UserDAO userDAO) {

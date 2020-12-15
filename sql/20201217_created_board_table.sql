@@ -9,4 +9,5 @@ CREATE TABLE `board` (
                          `mod_date` timestamp NULL DEFAULT NULL COMMENT '수정일자',
                          `del_date` timestamp NULL DEFAULT NULL COMMENT '삭제일자',
                          PRIMARY KEY (`sid`)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='게시판'
