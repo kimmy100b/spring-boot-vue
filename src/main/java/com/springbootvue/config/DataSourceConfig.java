@@ -1,4 +1,4 @@
-package com.springbootvue;
+package com.springbootvue.config;
 
 import com.springbootvue.dao.UserDAO;
 import com.springbootvue.dto.UserDTO;
@@ -27,5 +27,4 @@ public class DataSourceConfig {
 //                return null;
 //            }
 //        };
-//    }
 }

@@ -1,4 +1,4 @@
-package com.springbootvue;
+package com.springbootvue.config;
 
 import javax.sql.DataSource;
 
@@ -22,7 +22,7 @@ public class MySQLConfig {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sessionFactory.setMapperLocations(resolver.getResources("classpath:com.springbootvue.mappers/*.xml"));
+        sessionFactory.setMapperLocations(resolver.getResources("classpath:mappers/*.xml"));
         return sessionFactory.getObject();
     }
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springbootvue.dao.BoardDAO"><!--namespace를 통해 UserDAO와 연결합니다. -->
+
+<!--    게시만 목록-->
+    <select id="boardList" parameterType="com.springbootvue.dto.BoardDTO"
+            resultType="com.springbootvue.dto.BoardDTO">
+        SELECT *
+        FROM board
+    </select>
+
+<!--    게시판 글쓰기-->
+    <insert id="boardWrite">
+        INSERT INTO board(writer, title, content, reg_date)
+        VALUES(#{writer}, #{title}, #{content}, NOW())
+    </insert>
+
+</mapper>
