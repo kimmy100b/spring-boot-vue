@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,10 +24,13 @@ public class BoardController {
     /**
      * 게시판 목록
      */
-    @RequestMapping("/list")
-    public void boardList(Model model){
-        List<BoardDTO> list = boardService.boardList();
-        model.addAttribute("list", list);
+    @PostMapping("/list")
+    public List<BoardDTO> boardList(Model model){
+        List<BoardDTO> boardList = boardService.boardList();
+        // TODO : 나중에 모델 필요없으면 삭제
+        // model.addAttribute("list", boardList);
+
+        return boardList;
     }
 
     /**

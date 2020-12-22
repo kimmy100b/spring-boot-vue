@@ -6,7 +6,7 @@
 
 <!--    게시만 목록-->
     <select id="boardList" parameterType="com.springbootvue.dto.BoardDTO"
-            resultType="com.springbootvue.dto.BoardDTO">
+            resultType="HashMap">
         SELECT *
         FROM board
     </select>

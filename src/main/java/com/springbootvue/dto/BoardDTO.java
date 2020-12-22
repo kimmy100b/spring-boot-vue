@@ -10,8 +10,11 @@ import java.sql.Timestamp;
 @Getter // Getter 생성
 @Setter // Setter 생성
 public class BoardDTO {
+    private int sid;
     private String writer;
     private String title;
     private String content;
-//    private Timestamp regDate;
+    private Timestamp regDate;
+    private Timestamp modDate;
+    private Timestamp delDate;
 }
