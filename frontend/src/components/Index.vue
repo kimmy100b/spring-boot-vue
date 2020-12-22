@@ -54,6 +54,7 @@
 
 <script>
 import BoardWrite from './BoardWrite.vue'
+import BoardList from './BoardList.vue'
 import Test2 from '../components/Test2.vue'
 
 export default {
@@ -70,6 +71,11 @@ export default {
         id: 'BoardWrite',
         name: 'BoardWrite',
         component: BoardWrite
+      },
+      {
+        id: 'BoardList',
+        name: 'BoardList',
+        component: BoardList
       },
       {
         id: 'Test2',

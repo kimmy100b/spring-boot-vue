@@ -29,7 +29,8 @@ public class BoardServiceImpl implements BoardService {
      * 게시물 글쓰기 기능
      */
     @Override
-    public void boardWrite(BoardDTO boardDTO) {
-        boardDAO.boardWrite(boardDTO);
+    public int boardWrite(BoardDTO boardDTO) {
+        int rs = boardDAO.boardWrite(boardDTO);
+        return rs;
     }
 }

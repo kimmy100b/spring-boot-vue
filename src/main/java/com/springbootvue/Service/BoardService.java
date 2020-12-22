@@ -9,5 +9,5 @@ public interface BoardService {
     List<BoardDTO> boardList();
 
     //게시물 글쓰기 기능
-    void boardWrite(BoardDTO boardDTO);
+    int boardWrite(BoardDTO boardDTO);
 }
