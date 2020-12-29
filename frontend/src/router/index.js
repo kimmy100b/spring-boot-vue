@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Index from '../components/Index.vue'
+import BoardList from '../components/BoardList.vue'
+import BoardView from '../components/BoardView.vue'
 import Test2 from '../components/Test2.vue'
 import NoticeList from '../components/NoticeList.vue'
 import NoticeView from '../components/NoticeView.vue'
@@ -32,6 +34,17 @@ export default new Router({
       path: '/notice-view/:id',
       name: 'NoticeView',
       component: NoticeView,
+      props: true
+    },
+    {
+      path: '/board/list',
+      name: 'BoardList',
+      component: BoardList
+    },
+    {
+      path: '/board/view/:id',
+      name: 'BoardView',
+      component: BoardView,
       props: true
     },
     {
