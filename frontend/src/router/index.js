@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Index from '../components/Index'
+import Test2 from '../components/Test2.vue'
 
 Vue.use(Router)
 
@@ -19,6 +20,11 @@ export default new Router({
       path: '/',
       name: 'Index',
       component: Index
+    },
+    {
+      path: '/test2',
+      name: 'test2',
+      component: Test2
     }
   ]
 })
