@@ -4,8 +4,10 @@ import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-import Index from '../components/Index'
+import Index from '../components/Index.vue'
 import Test2 from '../components/Test2.vue'
+import NoticeList from '../components/NoticeList.vue'
+import NoticeView from '../components/NoticeView.vue'
 
 Vue.use(Router)
 
@@ -20,6 +22,17 @@ export default new Router({
       path: '/',
       name: 'Index',
       component: Index
+    },
+    {
+      path: '/notice-list',
+      name: 'NoticeList',
+      component: NoticeList
+    },
+    {
+      path: '/notice-view/:id',
+      name: 'NoticeView',
+      component: NoticeView,
+      props: true
     },
     {
       path: '/test2',

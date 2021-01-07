@@ -37,6 +37,11 @@ export default {
         id: 'test2',
         name: '테스트2',
         path: '/test2'
+      },
+      {
+        id: 'noticeList',
+        name: '공지사항',
+        path: '/notice-list'
       }
     )
   },
