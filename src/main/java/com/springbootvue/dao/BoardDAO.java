@@ -8,7 +8,9 @@ import java.util.List;
 @Primary
 public interface BoardDAO {
     //게시물 목차
-    List<BoardDTO> boardList();
+    List<BoardDTO> getBoardList();
     //게시물 글 작성
-    int boardWrite(BoardDTO boardDTO);
+    int setBoardWrite(BoardDTO boardDTO);
+    //게시물 상세보기
+    BoardDTO getBoardView(int id);
 }

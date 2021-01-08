@@ -21,16 +21,24 @@ public class BoardServiceImpl implements BoardService {
      * 게시물 목록 조회
      */
     @Override
-    public List<BoardDTO> boardList() {
-        return boardDAO.boardList();
+    public List<BoardDTO> getBoardList() {
+        return boardDAO.getBoardList();
     }
 
     /**
      * 게시물 글쓰기 기능
      */
     @Override
-    public int boardWrite(BoardDTO boardDTO) {
-        int rs = boardDAO.boardWrite(boardDTO);
+    public int setBoardWrite(BoardDTO boardDTO) {
+        int rs = boardDAO.setBoardWrite(boardDTO);
         return rs;
+    }
+
+    /**
+     * 게시물 글쓰기 기능
+     */
+    @Override
+    public BoardDTO getBoardView(int id) {
+        return boardDAO.getBoardView(id);
     }
 }

@@ -18,14 +18,20 @@ public class BoardDAOImpl implements BoardDAO {
     }
 
     @Override
-    public List<BoardDTO> boardList() {
+    public List<BoardDTO> getBoardList() {
 
-        return sqlSession.selectList("board.boardList");
+        return sqlSession.selectList("board.getBoardList");
     }
 
     @Override
-    public int boardWrite(BoardDTO boardDTO) {
-        int rs = sqlSession.insert("board.boardWrite", boardDTO);
+    public int setBoardWrite(BoardDTO boardDTO) {
+        int rs = sqlSession.insert("board.setBoardWrite", boardDTO);
         return rs;
+    }
+
+    @Override
+    public BoardDTO getBoardView(int id) {
+
+        return sqlSession.selectOne("board.getBoardView");
     }
 }

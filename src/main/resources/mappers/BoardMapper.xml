@@ -4,17 +4,23 @@
 
 <mapper namespace="com.springbootvue.dao.BoardDAO"><!--namespace를 통해 UserDAO와 연결합니다. -->
 
-<!--    게시만 목록-->
-    <select id="boardList" parameterType="com.springbootvue.dto.BoardDTO"
+<!--    게시판 목록-->
+    <select id="getBoardList" parameterType="com.springbootvue.dto.BoardDTO"
             resultType="HashMap">
         SELECT *
         FROM board
     </select>
 
 <!--    게시판 글쓰기-->
-    <insert id="boardWrite">
+    <insert id="setBoardWrite">
         INSERT INTO board(writer, title, content, reg_date)
         VALUES(#{writer}, #{title}, #{content}, NOW())
     </insert>
 
+    <!--    게시판 상세보기-->
+    <select id="getBoardView" resultType="com.springbootvue.dto.BoardDTO">
+        SELECT *
+        FROM board
+        WHERE sid = #{sid}
+    </select>
 </mapper>

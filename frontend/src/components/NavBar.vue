@@ -34,6 +34,16 @@ export default {
         path: '/'
       },
       {
+        id: 'boardList',
+        name: 'BoardList',
+        path: '/board/list'
+      },
+      {
+        id: 'boardView',
+        name: 'BoardView',
+        path: '/board/list/:id'
+      },
+      {
         id: 'test2',
         name: '테스트2',
         path: '/test2'

@@ -4,9 +4,7 @@ import com.springbootvue.dao.BoardDAO;
 import com.springbootvue.dto.BoardDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,10 +23,8 @@ public class BoardController {
      * 게시판 목록
      */
     @PostMapping("/list")
-    public List<BoardDTO> boardList(Model model){
-        List<BoardDTO> boardList = boardService.boardList();
-        // TODO : 나중에 모델 필요없으면 삭제
-        // model.addAttribute("list", boardList);
+    public List<BoardDTO> getBoardList(){
+        List<BoardDTO> boardList = boardService.getBoardList();
 
         return boardList;
     }
@@ -37,14 +33,23 @@ public class BoardController {
      * 게시판 글쓰기
      */
     @PostMapping("/write")
-    public int boardWrite(BoardDTO boardDTO){
-        int rs = boardService.boardWrite(boardDTO);
+    public int setBoardWrite(BoardDTO boardDTO){
+        int rs = boardService.setBoardWrite(boardDTO);
 
         if(rs==1){
            return rs;
         }else{
             return -1; //저장 실패
         }
+    }
+
+    /**
+     * 게시판 상세보기
+     */
+    @GetMapping("/view")
+    public BoardDTO getBoardView(@RequestParam(value = "id") int id){
+        BoardDTO boardDTO = boardService.getBoardView(id);
+        return boardDTO;
     }
 }
 
