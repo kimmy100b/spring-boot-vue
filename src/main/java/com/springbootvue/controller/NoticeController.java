@@ -3,10 +3,7 @@ package com.springbootvue.controller;
 import com.springbootvue.Service.NoticeService;
 import com.springbootvue.dto.NoticeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -37,10 +34,26 @@ public class NoticeController {
     }
 
     // 공지사항 삭제하기
-    @GetMapping("/deleteNotice")
+    @DeleteMapping("/deleteNotice")
     public void deleteNotice(
         @RequestParam(value="id") Integer id
     ) {
         noticeService.deleteNotice(id);
+    }
+
+    // 공지사항 등록하기
+    @PostMapping("/addNotice")
+    public void addNotice(
+        @RequestBody NoticeDTO noticeDTO
+    ) {
+        noticeService.addNotice(noticeDTO); // TODO 추후 회원가입 기능 구현되면 작성자를 server에서 추가한다.
+    }
+
+    // 공지사항 수정하기
+    @PostMapping("/editNotice")
+    public void editNotice(
+        @RequestBody NoticeDTO noticeDTO
+    ) {
+        noticeService.editNotice(noticeDTO);
     }
 }

@@ -10,7 +10,7 @@
         from
             notice
         order by
-            mod_date desc
+            ifnull(mod_date, reg_date) desc
     </select>
 
     <!--  공지사항 상세보기 가져오기  -->
@@ -19,7 +19,7 @@
         from
             notice
         where
-            n_id = ${id}
+            n_id = #{id}
     </select>
 
     <!--  공지사항 삭제하기  -->
@@ -30,4 +30,27 @@
         where
             n_id = #{id}
     </delete>
+
+    <!--  공지사항 등록하기  -->
+    <insert id="addNotice" parameterType="com.springbootvue.dto.NoticeDTO">
+        insert into notice(title, content, writer, reg_date)
+        values (
+            #{title},
+            #{content},
+            '김현진',
+            utc_timestamp()
+        )
+    </insert>
+
+    <!--  공지사항 수정하기  -->
+    <update id="editNotice" parameterType="com.springbootvue.dto.NoticeDTO">
+        update
+            notice
+        set
+            title = #{title},
+            content = #{content},
+            mod_date = utc_timestamp()
+        where
+            n_id = #{id}
+    </update>
 </mapper>
