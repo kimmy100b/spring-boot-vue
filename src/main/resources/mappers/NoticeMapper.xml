@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springbootvue.dao.NoticeDAO">
+
+    <!--  공지사항 목록 가져오기  -->
+    <select id="getNoticeList" resultType="HashMap">
+        select *
+        from
+            notice
+        order by
+            mod_date desc
+    </select>
+
+    <!--  공지사항 상세보기 가져오기  -->
+    <select id="getNoticeView" parameterType="int" resultType="HashMap">
+        select *
+        from
+            notice
+        where
+            n_id = ${id}
+    </select>
+
+    <!--  공지사항 삭제하기  -->
+    <delete id="deleteNotice">
+        delete
+        from
+            notice
+        where
+            n_id = #{id}
+    </delete>
+</mapper>

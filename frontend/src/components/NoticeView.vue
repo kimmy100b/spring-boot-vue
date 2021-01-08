@@ -1,0 +1,161 @@
+<template>
+  <div>
+    <navBar></navBar>
+    <b-container
+      class="content-container"
+      v-if="noticeView"
+    >
+      <b-row>
+        <b-col class="col-label col-2 border-top">게시글 번호</b-col>
+        <b-col class="col border-top">{{noticeView.nId}}</b-col>
+        <b-col class="col-label col-2 border-top">조회수</b-col>
+        <b-col class="col border-top">test:55</b-col>
+      </b-row>
+      <b-row>
+        <b-col class="col-label col-2 border-top">등록일</b-col>
+        <b-col class="col border-top">{{dateFormatter(noticeView.regDate)}}</b-col>
+        <b-col class="col-label col-2 border-top">수정일</b-col>
+        <b-col class="col border-top">{{dateFormatter(noticeView.modDate)}}</b-col>
+      </b-row>
+      <b-row>
+        <b-col class="col-label col-2 border-top">작성자</b-col>
+        <b-col class="col border-top">{{noticeView.writer}}</b-col>
+      </b-row>
+      <b-row>
+        <b-col class="col-label col-2 border-top">제목</b-col>
+        <b-col class="col border-top">{{noticeView.title}}</b-col>
+      </b-row>
+      <b-row>
+        <b-col class="col-label col-2 border-top border-bottom">본문</b-col>
+        <b-col class="col border-top border-bottom">{{noticeView.content}}</b-col>
+      </b-row>
+      <b-row align-h="between">
+        <b-col class="btn-row">
+          <router-link to="/notice-list">
+            <b-button variant="secondary" size="sm">목록</b-button>
+          </router-link>
+        </b-col>
+        <b-col class="btn-row text-right">
+          <b-button variant="info" size="sm">수정</b-button>
+          <b-button
+            variant="danger"
+            size="sm"
+            @click="showModal('delete-check-modal')"
+          >
+            삭제
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-modal
+        id="delete-check-modal"
+        title="삭제 확인"
+        button-size="sm"
+        header-text-variant="white"
+        header-bg-variant="primary"
+        hide-header-close
+        @ok="deleteNotice()"
+      >
+        <div>정말 삭제하시겠습니까?</div>
+      </b-modal>
+    </b-container>
+    <spinner v-if="isLoading" />
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+import * as DateUtil from '../common/DateUtil.js'
+import NavBar from './NavBar.vue'
+import Spinner from './Spinner.vue'
+
+export default {
+  name: 'NoticeView',
+  components: {
+    'spinner': Spinner,
+    'navBar': NavBar
+  },
+  data () {
+    return {
+      isLoading: false,
+      isOwner: false, // TODO 로그인 기능 구현 후, 수정, 삭제 버튼 작성자에게만 보이게 하기
+      noticeView: []
+    }
+  },
+  props: {
+    id: { type: String }
+  },
+  async created () {
+    this.getNoticeView()
+  },
+  methods: {
+    dateFormatter (date) {
+      if (date) {
+        return DateUtil.dateToVisualDateStr(new Date(date))
+      }
+    },
+    showModal (modalId) {
+      this.$bvModal.show(modalId)
+    },
+    hideModal (modalId) {
+      this.$bvModal.hide(modalId)
+    },
+    async getNoticeView () {
+      this.isLoading = true
+      try {
+        const result = await axios.get('/api/notice/getNoticeView', {
+          params: {
+            id: this.id
+          }})
+        this.noticeView = result.data
+      } catch (err) {
+        throw Error(err.message)
+      } finally {
+        this.isLoading = false
+        this.hideModal('delete-check-modal')
+      }
+    },
+    async deleteNotice () {
+      this.isLoading = true
+      try {
+        await axios.get('/api/notice/deleteNotice', {
+          params: {
+            id: this.id
+          }})
+        await this.$router.push('/notice-list')
+      } catch (err) {
+        throw Error(err.message)
+      } finally {
+        this.isLoading = false
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .content-container {
+    padding: 50px;
+  }
+  .col {
+    padding: 10px;
+  }
+  .col-label {
+    background-color: #afdbe6;
+  }
+  .btn-row {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  >>> .modal-header {
+    padding: 7px;
+  }
+
+  >>> .modal-footer {
+    padding: 3px;
+  }
+
+  >>> .modal-title {
+    font-size: medium;
+  }
+</style>
