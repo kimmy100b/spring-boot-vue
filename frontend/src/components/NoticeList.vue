@@ -11,7 +11,7 @@
           <div v-if="data.field.key === 'index'">
               {{ noticeItems.length - data.index }}
           </div>
-          <router-link v-if="data.field.key === 'title'" :to="{ name: 'NoticeView', params: { id: `${ data.item.nId }` }}">
+          <router-link v-if="data.field.key === 'title'" :to="{ name: 'NoticeView', params: { id: data.item.nId }}">
             <div class="table-cell-value">
               {{ data.value }}
             </div>

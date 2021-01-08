@@ -31,7 +31,7 @@
       </b-row>
       <b-row align-h="between">
         <b-col class="btn-row">
-          <router-link to="/notice-list">
+          <router-link :to="{ name: 'NoticeList' }">
             <b-button variant="secondary" size="sm">목록</b-button>
           </router-link>
         </b-col>

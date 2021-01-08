@@ -8,8 +8,8 @@
           v-for="menu in menus"
           :key="menu.id"
         >
-          <b-nav-item :to="menu.path">
-            {{menu.name}}
+          <b-nav-item :to="{ name: menu.name }">
+            {{menu.title}}
           </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
@@ -29,29 +29,20 @@ export default {
   created () {
     this.menus.push(
       {
-        id: 'index',
-        name: 'Home',
-        path: '/'
+        title: 'Home',
+        name: 'Index'
       },
       {
-        id: 'boardList',
-        name: 'BoardList',
-        path: '/board/list'
+        title: 'BoardList',
+        name: 'BoardList'
       },
       {
-        id: 'boardView',
+        title: 'BoardView',
         name: 'BoardView',
-        path: '/board/list/:id'
       },
       {
-        id: 'test2',
-        name: '테스트2',
-        path: '/test2'
-      },
-      {
-        id: 'noticeList',
-        name: '공지사항',
-        path: '/notice-list'
+        title: '공지사항',
+        name: 'NoticeList'
       }
     )
   },
