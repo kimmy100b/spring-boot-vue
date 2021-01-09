@@ -1,56 +1,52 @@
 <template>
   <div>
     <div class="post">
-      <div class="loading" v-if="loading">
-        <div class="d-flex justify-content-center mb-3">
-          <b-spinner label="Loading..."></b-spinner>
-        </div>
-      </div>
-
-      <div v-if="error" class="error">
-        {{ error }}
-      </div>
-
-      <div v-if="boardItems" class="content">
-        <navBar></navBar>
-        <div class="bbs-list">
-        <b-table hover :fields="boardFields" :items="boardItems" >
+      <navBar></navBar>
+      <b-container v-if="boardItems" class="content-container">
+        <b-table hover :fields="boardFields" :items="boardItems">
           <template v-slot:cell()="data">
             <span v-if="data.field.key === 'index'">
-              {{ data.index + 1 }}
+              {{ boardItems.length - data.index }}
             </span>
-            <span v-if="data.field.key === 'title'">
-              <router-link :to="{ name: 'BoardView', params: { id: `${ data.item.sid }` }}">{{ data.value }}</router-link>
-            </span>
+            <router-link
+              v-if="data.field.key === 'title'"
+             :to="{ name: 'BoardView', params: { bid: data.item.bid, index: boardItems.length - data.index }}"
+            >
+              <div>
+                {{ data.value }}
+              </div>
+              </router-link>
               <span v-else>
               {{ data.value }}
             </span>
           </template>
         </b-table>
-
         <b-col class="btn-row text-right">
-          <b-button variant="secondary" href="#/board/list">글쓰기</b-button>
+          <router-link :to="{ name: 'BoardWrite' }">
+            <b-button variant="secondary" >글쓰기</b-button>
+          </router-link>
         </b-col>
-        </div>
-<!--      </div class="bbs-list">-->
-      </div>
-<!--  </div class="content>    -->
+    </b-container>
     </div>
+    <spinner v-if="isLoading"></spinner>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import NabBar from '../components/NavBar.vue'
+import Spinner from './Spinner.vue'
+import * as DateUtil from '../common/DateUtil.js'
 
 export default {
   name: 'BoardList',
   components: {
-    'navBar': NabBar
+    'navBar': NabBar,
+    'spinner': Spinner
   },
   data () {
     return {
-      loading: false,
+      isLoading: false,
       error: null,
       boardItems: [],
       boardFields: undefined
@@ -58,25 +54,54 @@ export default {
   },
   created () {
     this.boardFields = [
-      { key: 'index', label: '번호', thStyle: {width: '5%'} },
-      { key: 'writer', label: '작성자', thStyle: {width: '15%'} },
-      { key: 'title', label: '제목', thStyle: {width: '20%'} },
-      { key: 'content', label: '내용', thStyle: {width: '35%'} },
-      { key: 'reg_date', label: '등록일자', thStyle: {width: '20%'} }
+      {
+        key: 'index',
+        label: '번호',
+        thStyle: {width: '5%'}
+      },
+      {
+        key: 'writer',
+        label: '작성자',
+        thStyle: {width: '15%'}
+      },
+      {
+        key: 'title',
+        label: '제목',
+        thStyle: {width: '20%'}
+      },
+      {
+        key: 'content',
+        label: '내용',
+        thStyle: {width: '35%'}
+      },
+      {
+        key: 'regDate',
+        label: '등록일자',
+        thStyle: {width: '20%'},
+        formatter: (value) => DateUtil.dateToVisualDateStr(new Date(value))
+      }
     ]
     this.getBoardList()
   },
   methods: {
     async getBoardList () {
-      const result = await axios.post('/api/board/list')
-      result.data.forEach(r => this.boardItems.push({ sid: r.sid, writer: r.writer, title: r.title, content: r.content, reg_date: r.reg_date }))
+      try {
+        this.isLoading = true
+        const result = await axios.post('/api/board/getBoardList')
+        this.boardItems = result.data
+      } catch (err) {
+        throw new Error(err)
+      } finally {
+        this.isLoading = false
+      }
     }
+
   }
 }
 </script>
 
 <style scoped>
-.bbs-list {
-  margin: 5%;
+.content-container {
+  padding-top: 50px;
 }
 </style>

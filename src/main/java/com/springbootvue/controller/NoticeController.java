@@ -1,6 +1,7 @@
 package com.springbootvue.controller;
 
 import com.springbootvue.Service.NoticeService;
+import com.springbootvue.dto.NoticeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +24,13 @@ public class NoticeController {
 
     // 공지사항 목록 가져오기
     @GetMapping("/getNoticeList")
-    public List<Map<String, Object>> getNoticeList() {
+    public List<NoticeDTO> getNoticeList() {
         return noticeService.getNoticeList();
     }
 
     // 공지사항 상세보기 가져오기
     @GetMapping("/getNoticeView")
-    public Map<String, Object> getNoticeView(
+    public NoticeDTO getNoticeView(
             @RequestParam(value="id") Integer id
     ) {
         return noticeService.getNoticeView(id);

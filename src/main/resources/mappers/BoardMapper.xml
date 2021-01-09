@@ -2,25 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.springbootvue.dao.BoardDAO"><!--namespace를 통해 UserDAO와 연결합니다. -->
-
+<mapper namespace="com.springbootvue.dao.BoardDAO">
 <!--    게시판 목록-->
-    <select id="getBoardList" parameterType="com.springbootvue.dto.BoardDTO"
-            resultType="HashMap">
+    <select id="getBoardList" resultType="com.springbootvue.dto.BoardDTO">
         SELECT *
         FROM board
+        ORDER BY
+            ifnull(mod_date, reg_date) desc
     </select>
 
-<!--    게시판 글쓰기-->
-    <insert id="setBoardWrite">
+    <!--    게시판 글쓰기-->
+    <insert id="addBoard" parameterType="com.springbootvue.dto.BoardDTO">
         INSERT INTO board(writer, title, content, reg_date)
         VALUES(#{writer}, #{title}, #{content}, NOW())
     </insert>
 
     <!--    게시판 상세보기-->
-    <select id="getBoardView" resultType="com.springbootvue.dto.BoardDTO">
+    <select id="getBoardView" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
         SELECT *
         FROM board
-        WHERE sid = #{sid}
+        WHERE b_id = #{id}
     </select>
+
+    <!--    게시판 삭제 -->
+    <delete id="deleteBoard" parameterType="int">
+        DELETE
+        FROM board
+        WHERE b_id = #{id}
+    </delete>
 </mapper>

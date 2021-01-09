@@ -7,7 +7,7 @@
     >
       <b-row>
         <b-col class="col-label col-2 border-top">게시글 번호</b-col>
-        <b-col class="col border-top">{{noticeView.nId}}</b-col>
+        <b-col class="col border-top">{{index}}</b-col>
         <b-col class="col-label col-2 border-top">조회수</b-col>
         <b-col class="col border-top">test:55</b-col>
       </b-row>
@@ -82,10 +82,12 @@ export default {
     }
   },
   props: {
-    id: { type: String }
+    nid: { type: Number },
+    index: { type: Number }
   },
   async created () {
     this.getNoticeView()
+    console.log(this.index)
   },
   methods: {
     dateFormatter (date) {
@@ -104,7 +106,7 @@ export default {
       try {
         const result = await axios.get('/api/notice/getNoticeView', {
           params: {
-            id: this.id
+            id: this.nid
           }})
         this.noticeView = result.data
       } catch (err) {
@@ -119,7 +121,7 @@ export default {
       try {
         await axios.get('/api/notice/deleteNotice', {
           params: {
-            id: this.id
+            id: this.nid
           }})
         await this.$router.push('/notice-list')
       } catch (err) {
