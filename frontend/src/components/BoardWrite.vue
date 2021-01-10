@@ -1,80 +1,183 @@
 <template>
-  <div class="bbs-write">
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-<!--      <b-form-group id="input-group-4">-->
-<!--        <span>공지여부 : </span>-->
-<!--        <b-form-checkbox-group v-model="form.checked" id="checkboxes-4">-->
-<!--          <b-form-checkbox value="notice">공지</b-form-checkbox>-->
-<!--          <b-form-checkbox value="">일반글</b-form-checkbox>-->
-<!--        </b-form-checkbox-group>-->
-<!--      </b-form-group>-->
+  <div>
+    <navBar></navBar>
+    <b-container class="content-container">
+      <h1>하루공부 글쓰기</h1>
+      <hr>
+      <b-form>
 
-      <b-form-group id="bbs-write-name" label="작성자 :" label-for="input-name">
-        <b-form-input
-          id="bbs-name"
-          v-model="form.name"
-          required
-          placeholder="이름을 입력하세요"
-        ></b-form-input>
-      </b-form-group>
+<!--        TODO : 삭제(회원가입기능)-->
+        <b-form-group id="board-writer" label="작성자 : " label-for="input-writer">
+          <b-form-input
+            id="board-writer"
+            v-model="board.writer"
+            required
+            placeholder="이름을 입력해 주세요."
+          >{{ board.writer }}</b-form-input>
+        </b-form-group>
 
-      <b-form-group id="bbs-write-content" label="내용 : ">
-        <b-form-textarea
-          id="bbs-content"
-          v-model="form.text"
-          placeholder="내용을 입력하세요"
-          rows="7"
-          max-rows="10"
-        ></b-form-textarea>
-      </b-form-group>
+<!--        TODO : 라벨제외-->
+        <b-form-group id="board-title" label="제목 : " label-for="input-title">
+          <b-form-input
+            id="board-title"
+            name="title"
+            v-model="board.title"
+            placeholder="제목을 입력해 주세요."
+          >{{ board.title }}</b-form-input>
+        </b-form-group>
 
-      <b-btn-group class="bbs-write-btn">
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-btn-group>
-    </b-form>
+        <b-form-group id="board-content" label="내용 : " label-for="input-content">
+          <tiptapEditor
+            class="tiptap-editor"
+            ref="tiptapEditor"
+            placeholder="내용을 입력하세요."
+          />
+        </b-form-group>
+
+        <b-form-file multiple>
+          <template slot="file-name" slot-scope="{ names }">
+            <b-badge variant="dark">{{ names[0] }}</b-badge>
+            <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+              + {{ names.length - 1 }} More files
+            </b-badge>
+          </template>
+        </b-form-file>
+
+        <div class="board-btn text-right">
+<!--          <b-button type="submit" variant="primary" size="sm">등록</b-button>-->
+          <b-button
+            variant="primary"
+            size="sm"
+            @click="onSubmit"
+          >
+            등록
+          </b-button>
+        </div>
+      </b-form>
+    </b-container>
+    <b-button
+      variant="primary"
+      v-if="isUploading"
+      class="board-uploading"
+      disabled
+      >
+        <b-spinner large></b-spinner>
+        등록 중입니다.
+    </b-button>
+
+    <spinner v-if="isLoading"></spinner>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+import NabBar from './NavBar'
+import Spinner from './Spinner'
+import TiptapEditor from './TiptapEditor.vue'
+
 export default {
   name: 'BoardWrite',
+  components: {
+    'navBar': NabBar,
+    'spinner': Spinner,
+    'tiptapEditor': TiptapEditor
+  },
+  props: {
+    bid: {type: [String, Number]}
+  },
   data () {
     return {
+      isModify: false,
+      isLoading: false,
+      isUploading: false,
       form: {
-        name: '',
-        text: ''
-        // checked: []
+        writer: '',
+        title: '',
+        content: ''
       },
-      show: true
+      board: {
+        writer: undefined,
+        title: undefined,
+        content: undefined
+      }
+    }
+  },
+  mounted () {
+    if (this.bid) {
+      this.isModify = true
+      this.getBoardView()
     }
   },
   methods: {
-    onSubmit (evt) {
-      // 제출했을 떄 이벤트
-      evt.preventDefault()
-      // axios.post('/api/data', {title: "vue.js는 조으다."}) .then(res => { console.log(res.data) })
-      alert(JSON.stringify(this.form))
+    async getBoardView () {
+      try {
+        this.isLoading = true
+        const result = await axios.get('/api/board/getBoardInfo', {
+          params: {
+            bid: this.bid
+          }
+        })
+        this.board = result.data
+        this.$refs.tiptapEditor.setContent(this.board.content)
+      } catch (err) {
+        throw new Error(err)
+      } finally {
+        this.isLoading = false
+      }
     },
-    onReset (evt) {
-      evt.preventDefault()
-      // Reset our form values
-      this.form.name = ''
-      this.form.text = ''
-      // this.form.checked = []
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
+    async onSubmit () {
+      this.isUploading = true
+      try {
+        const apiUrl = this.isModify ? '/api/board/modifyBoard' : '/api/board/addBoard'
+        let data = {
+          writer: this.board.writer, // TODO : 회원가입 후 삭제
+          title: this.board.title,
+          content: this.$refs.tiptapEditor.content
+        }
+        if (this.isModify) {
+          data = Object.assign(data, { bid: this.bid })
+        }
+        await axios.post(apiUrl, data)
+        await this.$router.push({ name: 'BoardList' })
+      } catch (err) {
+        return alert('등록에 실패했습니다.')
+      } finally {
+        this.isUploading = false
+      }
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.bbs-write{
-  margin: 50px;
+.content-container {
+  margin-top: 50px;
+  padding: 20px;
+}
+
+.tiptap-editor {
+   height: 400px;
+   overflow-y: auto;
+   border-radius: 4px;
+   box-shadow: rgba(0, 0, 0, 0.04) 0 4px 16px 0;
+   transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+   border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.tiptap-editor:focus-within {
+  /*transform: translateY(-8px);*/
+  box-shadow: rgba(0, 0, 0, 0.08) 0 12px 20px 0;
+}
+
+>>> .ProseMirror{
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.board-uploading{
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  opacity: 100;
+  font-size: x-large;
 }
 </style>

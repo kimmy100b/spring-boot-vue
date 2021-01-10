@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/board")
 public class BoardController {
@@ -15,39 +16,50 @@ public class BoardController {
 
     @Autowired
     public BoardController(BoardService boardService) {
+
         this.boardService = boardService;
     }
 
     // 게시판 목록 가져오기
     @PostMapping("/getBoardList")
     public List<BoardDTO> getBoardList(){
+
         return boardService.getBoardList();
     }
 
     // 게시판 글쓰기
     @PostMapping("/addBoard")
-    public int addBoard(BoardDTO boardDTO){
-        // TODO
-        int rs = boardService.addBoard(boardDTO);
+    public void addBoard(@RequestBody BoardDTO boardDTO){
 
-        if(rs==1){
-           return rs;
-        }else{
-            return -1; //저장 실패
-        }
+        boardService.addBoard(boardDTO);
+    }
+
+    //게시판 수정
+    @PostMapping("/modifyBoard")
+    public void modifyBoard(@RequestBody BoardDTO boardDTO){
+
+        boardService.modifyBoard(boardDTO);
     }
 
     // 게시판 상세보기
-    @GetMapping("/getBoardView")
-    public BoardDTO getBoardView(@RequestParam(value = "id") int id) {
-        return boardService.getBoardView(id);
+    @GetMapping("/getBoardInfo")
+    public BoardDTO getBoardInfo(@RequestParam(value = "bid") int bid) {
+
+        return boardService.getBoardInfo(bid);
     }
 
     // 게시판 삭제하기
-    @GetMapping("/deleteBoard")
-    public int deleteNotice(@RequestParam(value = "id") int id){
-        int rs = boardService.deleteBoard(id);
-        return rs;
+    @DeleteMapping("/deleteBoard")
+    public void deleteBoard(@RequestParam(value = "bid") int bid){
+
+        boardService.deleteBoard(bid);
+    }
+
+    // 게시판 조회수 증가
+    @GetMapping("/increaseBoardViews")
+    public void increaseBoardViews(@RequestParam(value = "bid") int bid) {
+
+        boardService.increaseBoardViews(bid);
     }
 }
 

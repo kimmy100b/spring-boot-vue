@@ -1,9 +1,6 @@
 package com.springbootvue.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -19,4 +16,25 @@ public class BoardDTO {
     private String views;
     private Timestamp regDate;
     private Timestamp modDate;
+
+    @Builder
+    public BoardDTO(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    @Builder
+    public BoardDTO(String writer, String title, String content) {
+        this.writer = writer;
+        this.title = title;
+        this.content = content;
+    }
+
+    @Builder
+    public BoardDTO(int bid, String writer, String title, String content) {
+        this.bid = bid;
+        this.writer = writer;
+        this.title = title;
+        this.content = content;
+    }
 }
