@@ -1,9 +1,8 @@
 package com.springbootvue.controller;
 
-import com.springbootvue.dao.BoardDAO;
+import com.springbootvue.Service.BoardService;
 import com.springbootvue.dto.BoardDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,29 +11,24 @@ import java.util.List;
 @RequestMapping("/api/board")
 public class BoardController {
 
-    final private BoardDAO boardService;
+    final private BoardService boardService;
 
     @Autowired
-    public BoardController(BoardDAO boardService) {
+    public BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
 
-    /**
-     * 게시판 목록
-     */
-    @PostMapping("/list")
+    // 게시판 목록 가져오기
+    @PostMapping("/getBoardList")
     public List<BoardDTO> getBoardList(){
-        List<BoardDTO> boardList = boardService.getBoardList();
-
-        return boardList;
+        return boardService.getBoardList();
     }
 
-    /**
-     * 게시판 글쓰기
-     */
-    @PostMapping("/write")
-    public int setBoardWrite(BoardDTO boardDTO){
-        int rs = boardService.setBoardWrite(boardDTO);
+    // 게시판 글쓰기
+    @PostMapping("/addBoard")
+    public int addBoard(BoardDTO boardDTO){
+        // TODO
+        int rs = boardService.addBoard(boardDTO);
 
         if(rs==1){
            return rs;
@@ -43,13 +37,17 @@ public class BoardController {
         }
     }
 
-    /**
-     * 게시판 상세보기
-     */
-    @GetMapping("/view")
-    public BoardDTO getBoardView(@RequestParam(value = "id") int id){
-        BoardDTO boardDTO = boardService.getBoardView(id);
-        return boardDTO;
+    // 게시판 상세보기
+    @GetMapping("/getBoardView")
+    public BoardDTO getBoardView(@RequestParam(value = "id") int id) {
+        return boardService.getBoardView(id);
+    }
+
+    // 게시판 삭제하기
+    @GetMapping("/deleteBoard")
+    public int deleteNotice(@RequestParam(value = "id") int id){
+        int rs = boardService.deleteBoard(id);
+        return rs;
     }
 }
 

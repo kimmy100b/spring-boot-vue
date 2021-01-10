@@ -33,12 +33,8 @@ export default {
         name: 'Index'
       },
       {
-        title: 'BoardList',
+        title: '매일공부',
         name: 'BoardList'
-      },
-      {
-        title: 'BoardView',
-        name: 'BoardView',
       },
       {
         title: '공지사항',

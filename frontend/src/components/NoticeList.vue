@@ -11,7 +11,7 @@
           <div v-if="data.field.key === 'index'">
               {{ noticeItems.length - data.index }}
           </div>
-          <router-link v-if="data.field.key === 'title'" :to="{ name: 'NoticeView', params: { id: data.item.nId }}">
+          <router-link v-if="data.field.key === 'title'" :to="{ name: 'NoticeView', params: { nid: data.item.nid }}">
             <div class="table-cell-value">
               {{ data.value }}
             </div>
@@ -81,6 +81,7 @@ export default {
       try {
         const result = await axios.get('/api/notice/getNoticeList')
         this.noticeItems = result.data
+        console.log(this.noticeItems)
       } catch (err) {
         throw err
       } finally {

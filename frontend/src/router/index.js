@@ -42,7 +42,7 @@ export default new Router({
       component: BoardList
     },
     {
-      path: '/board/view/:id',
+      path: '/board/view/:bid',
       name: 'BoardView',
       component: BoardView,
       props: true

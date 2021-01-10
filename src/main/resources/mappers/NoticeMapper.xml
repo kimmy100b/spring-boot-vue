@@ -5,7 +5,7 @@
 <mapper namespace="com.springbootvue.dao.NoticeDAO">
 
     <!--  공지사항 목록 가져오기  -->
-    <select id="getNoticeList" resultType="HashMap">
+    <select id="getNoticeList" resultType="com.springbootvue.dto.NoticeDTO">
         select *
         from
             notice
@@ -14,7 +14,7 @@
     </select>
 
     <!--  공지사항 상세보기 가져오기  -->
-    <select id="getNoticeView" parameterType="int" resultType="HashMap">
+    <select id="getNoticeView" parameterType="int" resultType="com.springbootvue.dto.NoticeDTO">
         select *
         from
             notice
