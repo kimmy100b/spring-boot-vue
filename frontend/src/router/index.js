@@ -10,6 +10,7 @@ import BoardView from '../components/BoardView.vue'
 import Test2 from '../components/Test2.vue'
 import NoticeList from '../components/NoticeList.vue'
 import NoticeView from '../components/NoticeView.vue'
+import NoticeWrite from '../components/NoticeWrite.vue'
 
 Vue.use(Router)
 
@@ -31,9 +32,20 @@ export default new Router({
       component: NoticeList
     },
     {
-      path: '/notice-view/:id',
+      path: '/notice-view/:nid',
       name: 'NoticeView',
       component: NoticeView,
+      props: true
+    },
+    {
+      path: '/notice-write',
+      name: 'NoticeWrite',
+      component: NoticeWrite
+    },
+    {
+      path: '/notice-modify/:nid',
+      name: 'NoticeModify',
+      component: NoticeWrite,
       props: true
     },
     {

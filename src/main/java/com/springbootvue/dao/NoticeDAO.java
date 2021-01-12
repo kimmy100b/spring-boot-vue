@@ -16,5 +16,16 @@ public interface NoticeDAO {
 
     // 공지사항 삭제하기
     int deleteNotice(@Param("id") Integer id);
+
+    // 공지사항 등록하기
+    int addNotice(
+        @Param("title") String title,
+        @Param("content") String content);
+
+    // 공지사항 수정하기
+    int editNotice(
+        @Param("id") Integer id,
+        @Param("title") String title,
+        @Param("content") String content);
 }
 

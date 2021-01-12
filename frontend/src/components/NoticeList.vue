@@ -2,6 +2,11 @@
   <div>
     <navBar></navBar>
     <b-container class="content-container">
+      <b-row>
+        <b-col class="notice-title text-center">
+          <span class="notice-title-label">공지사항</span>
+        </b-col>
+      </b-row>
       <b-table
         :fields="noticeFields"
         :items="noticeItems"
@@ -21,6 +26,13 @@
           </div>
         </template>
       </b-table>
+      <b-row>
+        <b-col class="btn-row text-right">
+          <router-link :to="{ name: 'NoticeWrite' }">
+            <b-button variant="info" size="sm">글쓰기</b-button>
+          </router-link>
+        </b-col>
+      </b-row>
     </b-container>
     <spinner v-if="isLoading" />
   </div>
@@ -63,12 +75,6 @@ export default {
         label: '등록일자',
         formatter: (value) => DateUtil.dateToVisualDateStr(new Date(value)),
         thStyle: {width: '200px'}
-      },
-      {
-        key: 'modDate',
-        label: '수정일자',
-        formatter: (value) => DateUtil.dateToVisualDateStr(new Date(value)),
-        thStyle: {width: '200px'}
       }
     ]
   },
@@ -81,7 +87,6 @@ export default {
       try {
         const result = await axios.get('/api/notice/getNoticeList')
         this.noticeItems = result.data
-        console.log(this.noticeItems)
       } catch (err) {
         throw err
       } finally {
@@ -94,7 +99,13 @@ export default {
 
 <style scoped>
   .content-container {
-    padding: 50px;
+    padding: 30px;
+  }
+  .notice-title {
+    padding: 30px;
+  }
+  .notice-title-label {
+    font-size: 1.2rem;
   }
   .table-cell-value {
     text-decoration: none;

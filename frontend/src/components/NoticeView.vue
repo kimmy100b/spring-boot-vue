@@ -6,16 +6,15 @@
       v-if="noticeView"
     >
       <b-row>
-        <b-col class="col-label col-2 border-top">게시글 번호</b-col>
-        <b-col class="col border-top">{{index}}</b-col>
-        <b-col class="col-label col-2 border-top">조회수</b-col>
-        <b-col class="col border-top">test:55</b-col>
+        <b-col class="notice-title text-center">
+          <span class="notice-title-label">공지사항</span>
+        </b-col>
       </b-row>
       <b-row>
         <b-col class="col-label col-2 border-top">등록일</b-col>
         <b-col class="col border-top">{{dateFormatter(noticeView.regDate)}}</b-col>
-        <b-col class="col-label col-2 border-top">수정일</b-col>
-        <b-col class="col border-top">{{dateFormatter(noticeView.modDate)}}</b-col>
+        <b-col class="col-label col-2 border-top">조회수</b-col>
+        <b-col class="col border-top">test:55</b-col>
       </b-row>
       <b-row>
         <b-col class="col-label col-2 border-top">작성자</b-col>
@@ -27,7 +26,9 @@
       </b-row>
       <b-row>
         <b-col class="col-label col-2 border-top border-bottom">본문</b-col>
-        <b-col class="col border-top border-bottom">{{noticeView.content}}</b-col>
+        <b-col class="col border-top border-bottom">
+          <div v-html="noticeView.content"></div>
+        </b-col>
       </b-row>
       <b-row align-h="between">
         <b-col class="btn-row">
@@ -36,7 +37,13 @@
           </router-link>
         </b-col>
         <b-col class="btn-row text-right">
-          <b-button variant="info" size="sm">수정</b-button>
+          <b-button
+            variant="info"
+            size="sm"
+            @click="editNotice()"
+          >
+            수정
+          </b-button>
           <b-button
             variant="danger"
             size="sm"
@@ -82,12 +89,11 @@ export default {
     }
   },
   props: {
-    nid: { type: Number },
+    nid: { type: [String, Number] },
     index: { type: Number }
   },
   async created () {
     this.getNoticeView()
-    console.log(this.index)
   },
   methods: {
     dateFormatter (date) {
@@ -97,9 +103,6 @@ export default {
     },
     showModal (modalId) {
       this.$bvModal.show(modalId)
-    },
-    hideModal (modalId) {
-      this.$bvModal.hide(modalId)
     },
     async getNoticeView () {
       this.isLoading = true
@@ -113,22 +116,24 @@ export default {
         throw Error(err.message)
       } finally {
         this.isLoading = false
-        this.hideModal('delete-check-modal')
       }
     },
     async deleteNotice () {
       this.isLoading = true
       try {
-        await axios.get('/api/notice/deleteNotice', {
+        await axios.delete('/api/notice/deleteNotice', {
           params: {
             id: this.nid
           }})
-        await this.$router.push('/notice-list')
+        await this.$router.push({ name: 'NoticeList' })
       } catch (err) {
         throw Error(err.message)
       } finally {
         this.isLoading = false
       }
+    },
+    editNotice () {
+      this.$router.push({ name: 'NoticeModify', params: { id: this.nid } })
     }
   }
 }
@@ -136,7 +141,13 @@ export default {
 
 <style scoped>
   .content-container {
-    padding: 50px;
+    padding: 30px;
+  }
+  .notice-title {
+    padding: 30px !important;
+  }
+  .notice-title-label {
+    font-size: 1.2rem;
   }
   .col {
     padding: 10px;
