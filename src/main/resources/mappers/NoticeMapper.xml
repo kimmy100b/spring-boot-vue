@@ -13,14 +13,24 @@
             ifnull(mod_date, reg_date) desc
     </select>
 
-    <!--  공지사항 상세보기 가져오기  -->
-    <select id="getNoticeView" parameterType="int" resultType="com.springbootvue.dto.NoticeDTO">
+    <!--  특정 공지사항 가져오기  -->
+    <select id="getNoticeInfo" parameterType="int" resultType="com.springbootvue.dto.NoticeDTO">
         select *
         from
             notice
         where
             n_id = #{id}
     </select>
+
+    <!--  공지사항 조회수 증가시키기  -->
+    <update id="increaseNoticeViews" parameterType="int">
+        update
+            notice
+        set
+            views = views + 1
+        where
+            n_id = #{id}
+    </update>
 
     <!--  공지사항 삭제하기  -->
     <delete id="deleteNotice">

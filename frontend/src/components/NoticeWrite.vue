@@ -64,6 +64,7 @@
         </b-col>
       </b-row>
     </b-container>
+    <spinner v-if="isLoading" />
   </div>
 </template>
 
@@ -103,7 +104,7 @@ export default {
     async setNotice () {
       this.isLoading = true
       try {
-        const result = await axios.get('/api/notice/getNoticeView', {
+        const result = await axios.get('/api/notice/getNoticeInfo', {
           params: {
             id: this.nid
           }
