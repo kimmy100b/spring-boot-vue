@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/notice")
@@ -25,12 +24,20 @@ public class NoticeController {
         return noticeService.getNoticeList();
     }
 
-    // 공지사항 상세보기 가져오기
+    // 공지사항 상세보기 가져오기 + 조회수 증가
     @GetMapping("/getNoticeView")
-    public NoticeDTO getNoticeView(
+    public NoticeDTO getNoticeAndIncreaseViews(
             @RequestParam(value="id") Integer id
     ) {
-        return noticeService.getNoticeView(id);
+        return noticeService.getNoticeAndIncreaseViews(id);
+    }
+
+    // 특정 공지사항 가져오기
+    @GetMapping("/getNoticeInfo")
+    public NoticeDTO getNoticeInfo(
+        @RequestParam(value="id") Integer id
+    ) {
+        return noticeService.getNoticeInfo(id);
     }
 
     // 공지사항 삭제하기

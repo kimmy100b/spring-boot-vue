@@ -14,7 +14,7 @@
         <b-col class="col-label col-2 border-top">등록일</b-col>
         <b-col class="col border-top">{{dateFormatter(noticeView.regDate)}}</b-col>
         <b-col class="col-label col-2 border-top">조회수</b-col>
-        <b-col class="col border-top">test:55</b-col>
+        <b-col class="col border-top">{{noticeView.views}}</b-col>
       </b-row>
       <b-row>
         <b-col class="col-label col-2 border-top">작성자</b-col>

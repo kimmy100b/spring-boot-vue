@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Setter
 public class NoticeDTO {
     private int nid;
+    private int views;
     private String writer;
     private String title;
     private String content;
