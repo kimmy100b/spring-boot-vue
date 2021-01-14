@@ -36,9 +36,9 @@
 
 <script>
 import axios from 'axios'
-import NabBar from '../components/NavBar.vue'
-import Spinner from './Spinner.vue'
-import * as DateUtil from '../common/DateUtil.js'
+import NabBar from '../NavBar.vue'
+import Spinner from '../Spinner.vue'
+import * as DateUtil from '../../common/DateUtil.js'
 
 export default {
   name: 'BoardList',
@@ -120,7 +120,7 @@ export default {
         result.data.forEach(r => this.boardItems.push({
           bid: r.bid,
           writer: r.writer,
-          title: r.title.substr(0, 25),
+          title: r.title,
           views: r.views,
           thumbUp: r.thumbUp,
           date: (r.modDate == null ? r.regDate : r.modDate)
