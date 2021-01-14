@@ -67,6 +67,10 @@
               </b-badge>
             </template>
           </b-form-file>
+<!--          <ValidationProvider rules="ext:jpg,png" v-slot="{ errors, validate }">-->
+<!--            <input type="file" @change="validate">-->
+<!--            <span>{{ errors[0] }}</span>-->
+<!--          </ValidationProvider>-->
 
           <div class="board-btn text-right">
             <b-button
@@ -202,8 +206,8 @@ export default {
 }
 
 .content-feedback{
-  color: red;
-  font-size: small;
+  color: #dc3545;
+  font-size: 12.8px;
 }
 
 .tiptap-editor {
