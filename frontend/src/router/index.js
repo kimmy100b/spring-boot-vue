@@ -20,6 +20,11 @@ import {
 import ko from 'vee-validate/dist/locale/ko.json'
 import * as rules from 'vee-validate/dist/rules'
 
+// extend('required', {
+//   ...required,
+//   message: 'This 필드 is required'
+// })
+
 import Index from '../components/Index.vue'
 import BoardList from '../components/board/BoardList.vue'
 import BoardView from '../components/board/BoardView.vue'
@@ -27,6 +32,8 @@ import BoardWrite from '../components/board/BoardWrite.vue'
 import NoticeList from '../components/NoticeList.vue'
 import NoticeView from '../components/NoticeView.vue'
 import NoticeWrite from '../components/NoticeWrite.vue'
+import UserSignUp from '../components/user/SignUp.vue'
+import UserLogin from '../components/user/Login.vue'
 
 Vue.use(Router)
 
@@ -102,6 +109,16 @@ export default new Router({
       name: 'BoardModify',
       component: BoardWrite,
       props: true
+    },
+    {
+      path: '/user/signup',
+      name: 'UserSignUp',
+      component: UserSignUp
+    },
+    {
+      path: '/user/login',
+      name: 'UserLogin',
+      component: UserLogin
     }
   ]
 })

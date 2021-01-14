@@ -2,7 +2,6 @@ package com.springbootvue.controller;
 
 import com.springbootvue.Service.CommentService;
 import com.springbootvue.dto.CommentDTO;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
