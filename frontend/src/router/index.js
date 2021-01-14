@@ -4,9 +4,16 @@ import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+// fort-awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import Index from '../components/Index.vue'
 import BoardList from '../components/BoardList.vue'
 import BoardView from '../components/BoardView.vue'
+import BoardWrite from '../components/BoardWrite.vue'
 import Test2 from '../components/Test2.vue'
 import NoticeList from '../components/NoticeList.vue'
 import NoticeView from '../components/NoticeView.vue'
@@ -14,10 +21,17 @@ import NoticeWrite from '../components/NoticeWrite.vue'
 
 Vue.use(Router)
 
-// Install BootstrapVue
+// BootstrapVue
 Vue.use(BootstrapVue)
-// Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+
+// fort-awesome
+library.add(
+  fasThumbsUp,
+  farThumbsUp
+)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.config.productionTip = false
 
 export default new Router({
   routes: [
@@ -57,6 +71,18 @@ export default new Router({
       path: '/board/view/:bid',
       name: 'BoardView',
       component: BoardView,
+      props: true
+    },
+    {
+      path: '/board/write',
+      name: 'BoardWrite',
+      component: BoardWrite,
+      props: true
+    },
+    {
+      path: '/board/modify/:bid',
+      name: 'BoardModify',
+      component: BoardWrite,
       props: true
     },
     {

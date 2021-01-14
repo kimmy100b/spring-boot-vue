@@ -33,7 +33,7 @@ export default {
         name: 'Index'
       },
       {
-        title: '매일공부',
+        title: '하루공부',
         name: 'BoardList'
       },
       {

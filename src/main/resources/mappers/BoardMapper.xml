@@ -14,20 +14,34 @@
     <!--    게시판 글쓰기-->
     <insert id="addBoard" parameterType="com.springbootvue.dto.BoardDTO">
         INSERT INTO board(writer, title, content, reg_date)
-        VALUES(#{writer}, #{title}, #{content}, NOW())
+        VALUES(#{writer}, #{title}, #{content}, utc_timestamp)
     </insert>
 
+    <!--    게시판 수정 기능-->
+    <update id="modifyBoard" parameterType="com.springbootvue.dto.BoardDTO">
+        UPDATE board
+        SET writer = #{writer}, title = #{title}, content = #{content}, mod_date = utc_timestamp
+        WHERE b_id = #{bid}
+    </update>
+
     <!--    게시판 상세보기-->
-    <select id="getBoardView" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
+    <select id="getBoardInfo" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
         SELECT *
         FROM board
-        WHERE b_id = #{id}
+        WHERE b_id = #{bid}
     </select>
 
     <!--    게시판 삭제 -->
     <delete id="deleteBoard" parameterType="int">
         DELETE
         FROM board
-        WHERE b_id = #{id}
+        WHERE b_id = #{bid}
     </delete>
+
+    <!--    게시판 조회수-->
+    <update id="increaseBoardViews" parameterType="int">
+        UPDATE board
+        SET views = views + 1
+        WHERE b_id = #{bid}
+    </update>
 </mapper>

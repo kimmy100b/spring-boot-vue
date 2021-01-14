@@ -1,47 +1,26 @@
 package com.springbootvue.Service;
 
-import com.springbootvue.dao.BoardDAO;
 import com.springbootvue.dto.BoardDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class BoardService {
 
-    final private BoardDAO boardDAO;
-
-    @Autowired
-    public BoardService(BoardDAO boardDAO) {
-        this.boardDAO = boardDAO;
-    }
-
-    // 게시물 목록 조회
-    public List<BoardDTO> getBoardList() {
-        return boardDAO.getBoardList();
-    }
+public interface BoardService {
+    // 게시물 목차 기능
+    List<BoardDTO> getBoardList();
 
     // 게시물 글쓰기 기능
-    public int addBoard(BoardDTO boardDTO) {
-        // TODO
-        int rs = boardDAO.addBoard(boardDTO);
-        if(rs==1){
-            return rs;
-        }
-        return -1;
-    }
+    void addBoard(BoardDTO boardDTO);
 
+    // 게시물 수정 기능
+    void modifyBoard(BoardDTO boardDTO);
+    
     // 게시물 상세보기
-    public BoardDTO getBoardView (int id) {
-        return boardDAO.getBoardView(id);
-    }
+    BoardDTO getBoardInfo (int bid);
 
-    public int deleteBoard(int id) {
-        int rs = boardDAO.deleteBoard(id);
-        if(rs==1){
-            return rs;
-        }
-        return -1;
-    }
+    // 게시물 삭제 기능
+    void deleteBoard(int bid);
+
+    // 게시물 조회수 증가
+    void increaseBoardViews(int bid);
 }

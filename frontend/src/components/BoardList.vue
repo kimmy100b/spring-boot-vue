@@ -3,6 +3,7 @@
     <div class="post">
       <navBar></navBar>
       <b-container v-if="boardItems" class="content-container">
+        <h3 class="text-center">하루 공부</h3>
         <b-table hover :fields="boardFields" :items="boardItems">
           <template v-slot:cell()="data">
             <span v-if="data.field.key === 'index'">
@@ -10,7 +11,8 @@
             </span>
             <router-link
               v-if="data.field.key === 'title'"
-             :to="{ name: 'BoardView', params: { bid: data.item.bid, index: boardItems.length - data.index }}"
+             :to="{ name: 'BoardView', params: { bid: data.item.bid }}"
+              class="board-title"
             >
               <div>
                 {{ data.value }}
@@ -57,28 +59,55 @@ export default {
       {
         key: 'index',
         label: '번호',
-        thStyle: {width: '5%'}
-      },
-      {
-        key: 'writer',
-        label: '작성자',
-        thStyle: {width: '15%'}
+        class: 'text-center',
+        thStyle: {
+          width: '10%',
+          textAlign: 'center'
+        }
       },
       {
         key: 'title',
         label: '제목',
-        thStyle: {width: '20%'}
+        thStyle: {
+          width: '40%',
+          textAlign: 'center'
+        }
       },
       {
-        key: 'content',
-        label: '내용',
-        thStyle: {width: '35%'}
+        key: 'writer',
+        label: '작성자',
+        class: 'text-center',
+        thStyle: {
+          width: '15%',
+          textAlign: 'center'
+        }
       },
       {
-        key: 'regDate',
-        label: '등록일자',
-        thStyle: {width: '20%'},
+        key: 'date',
+        label: '날짜',
+        thStyle: {
+          width: '17%',
+          textAlign: 'center'
+        },
         formatter: (value) => DateUtil.dateToVisualDateStr(new Date(value))
+      },
+      {
+        key: 'views',
+        label: '조회',
+        class: 'text-center',
+        thStyle: {
+          width: '9%',
+          textAlign: 'center'
+        }
+      },
+      {
+        key: 'thumbUp',
+        label: '엄지척',
+        class: 'text-center',
+        thStyle: {
+          width: '9%',
+          textAlign: 'center'
+        }
       }
     ]
     this.getBoardList()
@@ -88,7 +117,15 @@ export default {
       try {
         this.isLoading = true
         const result = await axios.post('/api/board/getBoardList')
-        this.boardItems = result.data
+        result.data.forEach(r => this.boardItems.push({
+          bid: r.bid,
+          writer: r.writer,
+          title: r.title.substr(0, 25),
+          views: r.views,
+          thumbUp: r.thumbUp,
+          date: (r.modDate == null ? r.regDate : r.modDate)
+        }))
+        // this.boardItems = result.data
       } catch (err) {
         throw new Error(err)
       } finally {
@@ -103,5 +140,14 @@ export default {
 <style scoped>
 .content-container {
   padding-top: 50px;
+}
+
+.board-title{
+  text-decoration: none;
+  color: black;
+}
+
+.board-title:hover{
+  text-decoration: underline;
 }
 </style>
