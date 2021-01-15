@@ -97,9 +97,9 @@
 </template>
 <script>
 import axios from 'axios'
-import NavBar from './NavBar'
-import Spinner from './Spinner.vue'
-import * as DateUtil from '../common/DateUtil'
+import NavBar from '../NavBar'
+import Spinner from '../Spinner.vue'
+import * as DateUtil from '../../common/DateUtil'
 
 export default {
   name: 'boardView',

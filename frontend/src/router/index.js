@@ -10,11 +10,20 @@ import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+// vee-validate
+import {
+  ValidationObserver,
+  ValidationProvider,
+  extend,
+  localize
+} from 'vee-validate'
+import ko from 'vee-validate/dist/locale/ko.json'
+import * as rules from 'vee-validate/dist/rules'
+
 import Index from '../components/Index.vue'
-import BoardList from '../components/BoardList.vue'
-import BoardView from '../components/BoardView.vue'
-import BoardWrite from '../components/BoardWrite.vue'
-import Test2 from '../components/Test2.vue'
+import BoardList from '../components/board/BoardList.vue'
+import BoardView from '../components/board/BoardView.vue'
+import BoardWrite from '../components/board/BoardWrite.vue'
 import NoticeList from '../components/NoticeList.vue'
 import NoticeView from '../components/NoticeView.vue'
 import NoticeWrite from '../components/NoticeWrite.vue'
@@ -32,6 +41,14 @@ library.add(
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
+
+// vee-validate
+Object.keys(rules).forEach(rule => {
+  extend(rule, rules[rule])
+})
+localize('ko', ko)
+Vue.component('ValidationObserver', ValidationObserver)
+Vue.component('ValidationProvider', ValidationProvider)
 
 export default new Router({
   routes: [
@@ -84,11 +101,6 @@ export default new Router({
       name: 'BoardModify',
       component: BoardWrite,
       props: true
-    },
-    {
-      path: '/test2',
-      name: 'test2',
-      component: Test2
     }
   ]
 })
