@@ -9,26 +9,34 @@
             <span v-if="data.field.key === 'index'">
               {{ boardItems.length - data.index }}
             </span>
-            <router-link
+            <div
               v-if="data.field.key === 'title'"
-             :to="{ name: 'BoardView', params: { bid: data.item.bid }}"
               class="board-title"
             >
-              <div>
+              <router-link
+                :to="{ name: 'BoardView', params: { bid: data.item.bid }}"
+                class="inner-title"
+              >
                 {{ data.value }}
-              </div>
+
               </router-link>
-              <span v-else>
+              <div class="inner-cnt-comment">
+                [{{ data.item.cntComment }}]
+              </div>
+
+            </div>
+            <span v-else>
               {{ data.value }}
             </span>
+
           </template>
         </b-table>
         <b-col class="btn-row text-right">
           <router-link :to="{ name: 'BoardWrite' }">
-            <b-button variant="secondary" >글쓰기</b-button>
+            <b-button variant="secondary">글쓰기</b-button>
           </router-link>
         </b-col>
-    </b-container>
+      </b-container>
     </div>
     <spinner v-if="isLoading"></spinner>
   </div>
@@ -110,10 +118,10 @@ export default {
         }
       }
     ]
-    this.getBoardList()
+    this.setBoardList()
   },
   methods: {
-    async getBoardList () {
+    async setBoardList () {
       try {
         this.isLoading = true
         const result = await axios.post('/api/board/getBoardList')
@@ -121,18 +129,17 @@ export default {
           bid: r.bid,
           writer: r.writer,
           title: r.title,
+          cntComment: r.cntComment,
           views: r.views,
           thumbUp: r.thumbUp,
           date: (r.modDate == null ? r.regDate : r.modDate)
         }))
-        // this.boardItems = result.data
       } catch (err) {
         throw new Error(err)
       } finally {
         this.isLoading = false
       }
     }
-
   }
 }
 </script>
@@ -143,11 +150,22 @@ export default {
 }
 
 .board-title{
+  display: flex;
+}
+
+.inner-title{
   text-decoration: none;
   color: black;
 }
 
-.board-title:hover{
+.inner-title:hover{
   text-decoration: underline;
 }
+
+.inner-cnt-comment{
+  padding-left: 7px;
+  color: red;
+  FONT-WEIGHT: 645;
+}
+
 </style>

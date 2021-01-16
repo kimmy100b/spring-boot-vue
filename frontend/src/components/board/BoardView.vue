@@ -30,30 +30,70 @@
             v-html="boardView.content">
           </div>
           <div class="board-icon">
-<!--            TODO : 회원 기능 후-->
-            <span>엄지척</span>
+            <!--            TODO : 회원 기능 후-->
             <font-awesome-icon
               :icon="[ thumbIcon,'thumbs-up']"
               class="icon-thumb"
               @click="clickThumb"
             />
-<!--            엄지척 개수-->
+            <span>{{ boardView.thumbUp }}</span>
+            <font-awesome-icon
+              :icon="[ 'far','comment-dots']"
+            />
+            <span>{{ cntComment }}</span>
           </div>
           <hr>
           <div class="board-comment">
             <h3>댓글</h3>
-<!--            댓글내용 들어가기<hr>-->
-            <div class="comment-writer">
-              <div>신윤정</div>
+            <ul class="comment-ul">
+              <li
+                v-for="commentItem in commentList"
+                v-bind:key="commentItem.id"
+                class="comment-li"
+              >
+                <b-avatar src="https://doozi316.github.io/assets/images/me.png" size="3rem"></b-avatar>
+                <div class="comment-item">
+                  <div class="comment-item-writer">
+                    <span>{{ commentItem.writer }}</span>
+                  </div>
+                  <div
+                    class="comment-item-content"
+                    v-html="commentItem.content">
+                  </div>
+                  <div class="comment-item-date">
+                    {{ dateFormatter(commentItem.regDate) }}
+                    <a>답글쓰기</a>
+                    <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
+                    <div class="comment-item-btn">
+                      <a>수정</a>
+                      <span @click="deleteComment(commentItem.cid)">삭제</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <b-form class="form-comment">
+              <!--                TODO : 작성자 변경-->
+              <span
+              >신윤정</span>
+              <!--                  v-model="comment.writer"-->
               <textarea
                 placeholder="댓글을 입력하세요"
                 rows="1"
                 class="comment-content"
+                v-model="comment.content"
               ></textarea>
+
               <div class="text-right">
-                <b-button variant="secondary" size="sm">등록</b-button>
+                <b-button
+                  variant="secondary"
+                  size="sm"
+                  @click="onCommentSubmit"
+                >
+                  등록
+                </b-button>
               </div>
-            </div>
+            </b-form>
           </div>
           <!-- end board-comment-->
         </div>
@@ -101,6 +141,8 @@ import NavBar from '../NavBar'
 import Spinner from '../Spinner.vue'
 import * as DateUtil from '../../common/DateUtil'
 
+const BOARD_GUBUN = 1
+
 export default {
   name: 'boardView',
   components: {
@@ -111,15 +153,22 @@ export default {
     return {
       isLoading: false,
       boardView: [],
-      thumbIcon: 'far'
+      cntComment: 0,
+      commentList: [],
+      thumbIcon: 'far',
+      comment: {
+        content: undefined
+      }
     }
   },
   props: {
     bid: {type: [String, Number]}
   },
-  created () {
-    this.increaseBoardViews()
-      .then(this.getBoardView)
+  async created () {
+    await this.increaseBoardViews()
+    await this.setBoardInfo()
+    await this.setCommentList()
+    await this.setCntComment()
   },
   methods: {
     dateFormatter (date) {
@@ -144,7 +193,7 @@ export default {
         throw new Error(err)
       }
     },
-    async getBoardView () {
+    async setBoardInfo () {
       try {
         this.isLoading = true
         const result = await axios.get('/api/board/getBoardInfo', {
@@ -166,10 +215,87 @@ export default {
           params: {
             bid: this.bid
           }})
-        await this.$router.push({name: 'BoardList'})
+        await this.$router.push({ name: 'BoardList' })
       } catch (err) {
         throw Error(err.message)
       } finally {
+        this.isLoading = false
+      }
+    },
+    async setCommentList () {
+      try {
+        this.isLoading = true
+        this.commentList = []
+        const result = await axios.get('/api/comments/getCommentList', {
+          params: {
+            gubun: BOARD_GUBUN,
+            fkId: this.bid
+          }
+        })
+        result.data.forEach(r => this.commentList.push({
+          cid: r.cid,
+          fkId: r.fkId,
+          writer: r.writer,
+          content: r.content.replace(/(?:\r\n|\r|\n)/g, '<br />'),
+          regDate: r.regDate
+        }))
+      } catch (err) {
+        throw new Error(err)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async setCntComment () {
+      try {
+        this.isLoading = true
+        const result = await axios.get('/api/comments/getCntComment', {
+          params: {
+            gubun: BOARD_GUBUN,
+            fkId: this.bid
+          }
+        })
+        this.cntComment = result.data
+      } catch (err) {
+        throw new Error(err)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async deleteComment (cid) {
+      this.isLoading = true
+      try {
+        await axios.delete('/api/comments/deleteComment', {
+          params: {
+            cid: cid,
+            fkId: this.bid
+          }})
+        await this.setCommentList()
+        await this.setCntComment()
+      } catch (err) {
+        throw Error(err.message)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async onCommentSubmit () {
+      this.isLoading = true
+      try {
+        let data = {
+          gubun: 1,
+          fkId: this.bid,
+          level: 0,
+          parent_id: 0,
+          // writer: this.comment.writer,
+          writer: '신윤정',
+          content: this.comment.content
+        }
+        await axios.post('/api/comments/addComment', data)
+        await this.setCommentList()
+        await this.setCntComment()
+      } catch (err) {
+        throw Error(err.message)
+      } finally {
+        this.comment.content = null
         this.isLoading = false
       }
     }
@@ -195,7 +321,8 @@ export default {
   align-items: center;
 }
 
-.board-info-text{
+.board-info-text,
+.comment-item{
   margin-left: 5px;
 }
 .info-date-view{
@@ -255,7 +382,30 @@ export default {
   animation: thumbSize 0.5s linear;
 }
 
-.comment-writer{
+.comment-ul{
+  padding: 0px;
+}
+
+.comment-li{
+  display: flex;
+  padding: 12px 23px 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.comment-li:first-child{
+  border-top: none;
+}
+
+.comment-item-writer{
+  font-weight: 600;
+}
+
+.comment-item-date{
+  font-size: 12px;
+  color: gray;
+}
+
+.form-comment{
   margin: 12px 0 29px;
   padding: 16px 10px 10px 18px;
   border: 2px solid darkgray;

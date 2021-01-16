@@ -5,10 +5,14 @@
 <mapper namespace="com.springbootvue.dao.BoardDAO">
 <!--    게시판 목록-->
     <select id="getBoardList" resultType="com.springbootvue.dto.BoardDTO">
-        SELECT *
+        SELECT b_id, writer, title, content, views, thumb_up, reg_date, mod_date,
+               (SELECT count(*)
+                FROM comment c
+                WHERE c.fk_id = b_id and c.gubun = 1)
+                AS cnt_comment
         FROM board
         ORDER BY
-            ifnull(mod_date, reg_date) desc
+            ifnull(mod_date, reg_date) DESC
     </select>
 
     <!--    게시판 글쓰기-->
