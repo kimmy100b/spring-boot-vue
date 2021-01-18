@@ -7,7 +7,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // fort-awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons'
-import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons'
+import { faThumbsUp as farThumbsUp, faCommentDots } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // vee-validate
@@ -37,7 +37,8 @@ Vue.use(IconsPlugin)
 // fort-awesome
 library.add(
   fasThumbsUp,
-  farThumbsUp
+  farThumbsUp,
+  faCommentDots
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false
