@@ -7,25 +7,34 @@
           <span class="notice-title-label">공지사항</span>
         </b-col>
       </b-row>
-      <b-form>
-        <b-form-group>
-          <b-form-input
-            class="title-input"
-            v-model="notice.title"
-            placeholder="TITLE"
-            required
+      <validation-observer ref="observer" v-slot="{ handleSubmit }">
+        <b-form @submit.stop.prevent="handleSubmit(save)">
+          <validation-provider
+            :rules="{ required: true }"
+            v-slot="validationContext"
           >
-            {{notice.title}}
-          </b-form-input>
-        </b-form-group>
-        <hr>
-        <b-form-group>
-          <tiptapEditor
-            class="tiptap-editor"
-            ref="tiptapEditor"
-          />
-        </b-form-group>
-        <b-form-group>
+            <b-form-group>
+              <b-form-input
+                class="title-input"
+                v-model="notice.title"
+                placeholder="TITLE"
+                :state="getValidationState(validationContext)"
+              >
+                {{notice.title}}
+              </b-form-input>
+              <b-form-invalid-feedback>
+                제목을 입력해주세요
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+          <hr>
+          <b-form-group>
+            <tiptapEditor
+              class="tiptap-editor"
+              ref="tiptapEditor"
+            />
+          </b-form-group>
+          <b-form-group>
           <b-form-file
             v-model="notice.files"
             placeholder="파일을 선택해주세요."
@@ -34,7 +43,7 @@
           >
           </b-form-file>
         </b-form-group>
-        <b-form-group
+          <b-form-group
           class="border rounded file-list"
           v-if="notice.files"
         >
@@ -46,7 +55,8 @@
             {{file.name}} ({{file.size}})
           </div>
         </b-form-group>
-      </b-form>
+        </b-form>
+      </validation-observer>
       <b-row align-h="between">
         <b-col>
           <router-link :to="{ name: 'NoticeList' }">
@@ -101,6 +111,9 @@ export default {
     }
   },
   methods: {
+    getValidationState ({ dirty, validated, valid = null }) {
+      return dirty || validated ? valid : null
+    },
     async setNotice () {
       this.isLoading = true
       try {
