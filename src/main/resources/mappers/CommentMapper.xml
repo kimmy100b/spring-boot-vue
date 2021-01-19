@@ -22,9 +22,9 @@
     <!--   댓글 수정 -->
     <update id="modifyComment">
         UPDATE comment
-        SET gubun = #{gubun}, writer = #{writer},
+        SET writer = #{writer},
             content = #{content}, mod_date = utc_timestamp
-        WHERE c_id = #{cid}
+        WHERE gubun = #{gubun} and fk_id = #{fkId} and c_id = #{cid}
     </update>
 
     <!--    댓글 삭제-->
