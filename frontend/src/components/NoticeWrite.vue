@@ -20,7 +20,7 @@
                 placeholder="TITLE"
                 :state="getValidationState(validationContext)"
               >
-                {{notice.title}}
+                {{ notice.title }}
               </b-form-input>
               <b-form-invalid-feedback>
                 제목을 입력해주세요
@@ -35,46 +35,47 @@
             />
           </b-form-group>
           <b-form-group>
-          <b-form-file
-            v-model="notice.files"
-            placeholder="파일을 선택해주세요."
-            drop-placeholder="파일을 드래그 & 드롭 해주세요"
-            multiple
-          >
-          </b-form-file>
-        </b-form-group>
+            <b-form-file
+              v-model="notice.files"
+              placeholder="파일을 선택해주세요."
+              drop-placeholder="파일을 드래그 & 드롭 해주세요"
+              multiple
+            >
+            </b-form-file>
+          </b-form-group>
           <b-form-group
-          class="border rounded file-list"
-          v-if="notice.files"
-        >
-          <div
-            class="file-label"
-            v-for="(file, idx) in notice.files"
-            :key="idx"
+            class="border rounded file-list"
+            v-if="notice.files"
           >
-            {{file.name}} ({{file.size}})
-          </div>
-        </b-form-group>
+            <div
+              class="file-label"
+              v-for="(file, idx) in notice.files"
+              :key="idx"
+            >
+              {{ file.name }} ({{ file.size }})
+            </div>
+          </b-form-group>
+
+          <b-row align-h="between">
+            <b-col>
+              <router-link :to="{ name: 'NoticeList' }">
+                <b-button variant="secondary" size="sm">목록</b-button>
+              </router-link>
+            </b-col>
+            <b-col class="text-right">
+              <b-button
+                variant="info"
+                size="sm"
+                type="submit"
+              >
+                저장
+              </b-button>
+            </b-col>
+          </b-row>
         </b-form>
       </validation-observer>
-      <b-row align-h="between">
-        <b-col>
-          <router-link :to="{ name: 'NoticeList' }">
-            <b-button variant="secondary" size="sm">목록</b-button>
-          </router-link>
-        </b-col>
-        <b-col class="text-right">
-          <b-button
-            variant="info"
-            size="sm"
-            @click="save"
-          >
-            저장
-          </b-button>
-        </b-col>
-      </b-row>
     </b-container>
-    <spinner v-if="isLoading" />
+    <spinner v-if="isLoading"/>
   </div>
 </template>
 
