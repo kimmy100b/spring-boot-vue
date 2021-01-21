@@ -2,22 +2,19 @@
   <div>
     <navBar></navBar>
     <b-container class="content-container">
-      <b-row>
-        <b-col class="notice-title text-center">
-          <span class="notice-title-label">공지사항</span>
-        </b-col>
-      </b-row>
+      <h1>공지 사항</h1>
+      <hr>
       <validation-observer ref="observer" v-slot="{ handleSubmit }">
         <b-form @submit.stop.prevent="handleSubmit(save)">
           <validation-provider
             :rules="{ required: true }"
             v-slot="validationContext"
           >
-            <b-form-group>
+            <b-form-group label="제목 : ">
               <b-form-input
                 class="title-input"
                 v-model="notice.title"
-                placeholder="TITLE"
+                placeholder="제목을 입력해 주세요."
                 :state="getValidationState(validationContext)"
               >
                 {{ notice.title }}
@@ -27,20 +24,26 @@
               </b-form-invalid-feedback>
             </b-form-group>
           </validation-provider>
-          <hr>
-          <b-form-group>
+          <b-form-group label="내용 : ">
             <tiptapEditor
               class="tiptap-editor"
               ref="tiptapEditor"
             />
+            <span v-if="isContentDirty" class="content-feedback">
+              내용 항목은 필수 정보입니다
+            </span>
           </b-form-group>
           <b-form-group>
             <b-form-file
               v-model="notice.files"
-              placeholder="파일을 선택해주세요."
-              drop-placeholder="파일을 드래그 & 드롭 해주세요"
               multiple
             >
+              <template slot="file-name" slot-scope="{ names }">
+                <b-badge variant="dark">{{ names[0] }}</b-badge>
+                <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+                  + {{ names.length - 1 }} More files
+                </b-badge>
+              </template>
             </b-form-file>
           </b-form-group>
           <b-form-group
@@ -67,6 +70,7 @@
                 variant="info"
                 size="sm"
                 type="submit"
+                @click="save"
               >
                 저장
               </b-button>
@@ -99,6 +103,7 @@ export default {
     return {
       isModify: false,
       isLoading: false,
+      isContentDirty: false,
       notice: {
         title: undefined,
         files: undefined
@@ -120,7 +125,7 @@ export default {
       try {
         const result = await axios.get('/api/notice/getNoticeInfo', {
           params: {
-            id: this.nid
+            id: this.nid``
           }
         })
         this.notice = result.data
@@ -132,6 +137,10 @@ export default {
       }
     },
     async save () {
+      if (!this.$refs.tiptapEditor.content) {
+        this.isContentDirty = true
+        return
+      }
       this.isLoading = true
       try {
         const apiUrl = this.isModify ? '/api/notice/editNotice' : '/api/notice/addNotice'
@@ -143,7 +152,7 @@ export default {
           params = Object.assign(params, {nid: this.nid})
         }
         await axios.post(apiUrl, params)
-        await this.$router.push({ name: 'NoticeList' }) // TODO 리스트 말고 View 로 보내는게 좋을듯?
+        await this.$router.push({ name: 'NoticeList' })
       } catch (err) {
         throw new Error(err)
       } finally {
@@ -156,61 +165,38 @@ export default {
 
 <style scoped>
   .content-container {
-    padding: 30px;
+    margin-top: 50px;
+    padding: 20px;
   }
-  .notice-title {
-    padding: 30px;
-  }
-  .title-input {
-    font-size: 2rem;
-    font-weight: bold;
-    height: 50px;
-    border: none;
-    color: #686868;
-  }
-  .title-input:focus {
-    outline: none 0 !important;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-  }
-  .title-input::placeholder {
-    font-size: 2rem;
-    font-style: italic;
-    color: lightgray;
-  }
-  .notice-title-label {
-    font-size: 1.2rem;
-  }
+
   .file-list {
     padding: 5px;
     height: 60px;
     overflow-y: scroll;
   }
+
   .file-label {
     width: 100%;
+    padding: 0 10px;
   }
+
+  .content-feedback{
+    color: #dc3545;
+    font-size: small;
+  }
+
   .tiptap-editor {
     height: 400px;
     overflow-y: auto;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.04) 0 4px 16px 0;
     transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+    border: 1px solid rgba(0, 0, 0, 0.3);
   }
+
   .tiptap-editor:focus-within {
     /*transform: translateY(-8px);*/
     box-shadow: rgba(0, 0, 0, 0.08) 0 12px 20px 0;
   }
-  >>> .custom-file-label:focus-within {
-    outline: none 0 !important;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-  }
-  >>> .custom-file-label {
-    border: none;
-  }
-  >>> .custom-file-label::after {
-    border-radius: 0.25rem;
-  }
+
 </style>
