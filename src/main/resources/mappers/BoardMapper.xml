@@ -3,16 +3,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.springbootvue.dao.BoardDAO">
-<!--    게시판 목록-->
-    <select id="getBoardList" resultType="com.springbootvue.dto.BoardDTO">
-        SELECT b_id, writer, title, content, views, thumb_up, reg_date, mod_date,
+    <!--    게시판 목록-->
+    <select id="getBoardList" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
+        SELECT b_id, writer, title, content, views,
+               thumb_up, reg_date, mod_date, @ROWNUM := @ROWNUM+1 AS rowNum,
                (SELECT count(*)
                 FROM comment c
                 WHERE c.fk_id = b_id and c.gubun = 1)
                 AS cnt_comment
-        FROM board
+        FROM board, (SELECT @ROWNUM := 0) AS R
         ORDER BY
             ifnull(mod_date, reg_date) DESC
+        LIMIT #{startIndex}, #{pageSize}
     </select>
 
     <!--    게시판 글쓰기-->
@@ -48,4 +50,10 @@
         SET views = views + 1
         WHERE b_id = #{bid}
     </update>
+
+    <!--    전체 게시물 수-->
+    <select id="selectBoardListCnt" resultType="Integer">
+        SELECT COUNT(*) AS listCnt
+        FROM board
+    </select>
 </mapper>

@@ -23,14 +23,11 @@ public class BoardServiceImpl implements BoardService{
         this.commentDAO = commentDAO;
     }
 
-    @Autowired
-    
-
     // 게시물 목록 조회
     @Override
-    public List<BoardDTO> getBoardList() {
+    public List<BoardDTO> getBoardList(int startIndex, int pageSize) {
 
-        return boardDAO.getBoardList();
+        return boardDAO.getBoardList(startIndex, pageSize);
     }
 
     // 게시물 글쓰기 기능
@@ -84,5 +81,11 @@ public class BoardServiceImpl implements BoardService{
         if(rs != 1){
             showMessageDialog(null, "조회수 증가에 실패하였습니다.");
         }
+    }
+
+    // 총 게시물 수
+    @Override
+    public int selectBoardListCnt() {
+        return boardDAO.selectBoardListCnt();
     }
 }
