@@ -33,6 +33,12 @@ public class CommentController {
         commentService.addComment(commentDTO);
     }
 
+    @PostMapping("/modifyComment")
+    public void modifyComment(@RequestBody CommentDTO commentDTO){
+
+        commentService.modifyComment(commentDTO);
+    }
+
     @DeleteMapping("/deleteComment")
     public void deleteComment(
             @RequestParam(value = "cid") Integer cid,

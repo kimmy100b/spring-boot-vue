@@ -47,8 +47,8 @@
             <h3>댓글</h3>
             <ul class="comment-ul">
               <li
-                v-for="commentItem in commentList"
-                v-bind:key="commentItem.id"
+                v-for="(commentItem, idx) in commentList"
+                :key="idx"
                 class="comment-li"
               >
                 <b-avatar src="https://doozi316.github.io/assets/images/me.png" size="3rem"></b-avatar>
@@ -57,19 +57,54 @@
                     <span>{{ commentItem.writer }}</span>
                   </div>
                   <div
-                    class="comment-item-content"
-                    v-html="commentItem.content">
-                  </div>
-                  <div class="comment-item-date">
-                    {{ dateFormatter(commentItem.regDate) }}
-                    <a>답글쓰기</a>
-                    <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
-                    <div class="comment-item-btn">
-                      <a>수정</a>
-                      <span @click="deleteComment(commentItem.cid)">삭제</span>
+                    class="comment-area"
+                    v-if="!commentItem.showEditor"
+                  >
+                    <span
+                      class="comment-item-content"
+                      v-html="commentItem.content">
+                    </span>
+                    <div class="comment-item-info">
+                      {{ dateFormatter(commentItem.regDate) }}
+                      <a>답글쓰기</a>
+                      <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
+                      <div class="comment-item-btn">
+                        <span @click="openEditor(idx)">수정</span>
+                        <span @click="deleteComment(commentItem.cid)">삭제</span>
+                      </div>
                     </div>
+                    <!-- end comment-item-info -->
                   </div>
+                  <!-- end comment-area -->
+                  <b-form
+                    class="form-modify-comment"
+                    v-if="commentItem.showEditor"
+                  >
+                    <textarea
+                      placeholder="댓글을 입력하세요"
+                      class="comment-modify-content"
+                      v-model="modifyComment.content"
+                    ></textarea>
+
+                    <div class="text-right">
+                      <b-button
+                        variant="secondary"
+                        size="sm"
+                        @click="onCommentSubmit(commentItem.cid)"
+                      >
+                        수정
+                      </b-button>
+                      <b-button
+                        variant="secondary"
+                        size="sm"
+                        @click="closeEditor(idx)"
+                      >
+                        취소
+                      </b-button>
+                    </div>
+                  </b-form>
                 </div>
+                <!--  end comment-item -->
               </li>
             </ul>
             <b-form class="form-comment">
@@ -88,7 +123,7 @@
                 <b-button
                   variant="secondary"
                   size="sm"
-                  @click="onCommentSubmit"
+                  @click="onCommentSubmit(0)"
                 >
                   등록
                 </b-button>
@@ -154,9 +189,14 @@ export default {
       isLoading: false,
       boardView: [],
       cntComment: 0,
+      // showEditor: false,
+      isModifyComment: false,
       commentList: [],
       thumbIcon: 'far',
       comment: {
+        content: undefined
+      },
+      modifyComment: {
         content: undefined
       }
     }
@@ -277,19 +317,32 @@ export default {
         this.isLoading = false
       }
     },
-    async onCommentSubmit () {
+    async onCommentSubmit (cid) {
       this.isLoading = true
+      if (cid) {
+        this.isModifyComment = true
+      }
       try {
+        const apiUrl = this.isModifyComment ? '/api/comments/modifyComment' : '/api/comments/addComment'
         let data = {
-          gubun: 1,
+          gubun: BOARD_GUBUN,
           fkId: this.bid,
-          level: 0,
-          parent_id: 0,
           // writer: this.comment.writer,
-          writer: '신윤정',
-          content: this.comment.content
+          writer: '신윤정'
         }
-        await axios.post('/api/comments/addComment', data)
+        if (this.isModifyComment) {
+          data = Object.assign(data, {
+            cid: cid,
+            content: this.modifyComment.content
+          })
+        } else {
+          data = Object.assign(data, {
+            level: 0,
+            parent_id: 0,
+            content: this.comment.content
+          })
+        }
+        await axios.post(apiUrl, data)
         await this.setCommentList()
         await this.setCntComment()
       } catch (err) {
@@ -297,7 +350,15 @@ export default {
       } finally {
         this.comment.content = null
         this.isLoading = false
+        this.isModifyComment = false
       }
+    },
+    openEditor (idx) {
+      this.$set(this.commentList[idx], 'showEditor', true)
+      this.modifyComment.content = this.commentList[idx].content
+    },
+    closeEditor (idx) {
+      this.$set(this.commentList[idx], 'showEditor', false)
     }
   }
 }
@@ -396,30 +457,37 @@ export default {
   border-top: none;
 }
 
+.comment-item{
+  width: 100%;
+}
+
 .comment-item-writer{
   font-weight: 600;
 }
 
-.comment-item-date{
+.comment-item-info{
   font-size: 12px;
   color: gray;
 }
 
-.form-comment{
+.form-comment,
+.form-modify-comment{
   margin: 12px 0 29px;
   padding: 16px 10px 10px 18px;
   border: 2px solid darkgray;
   border-radius: 6px;
 }
 
-.comment-content{
+.comment-content,
+.comment-modify-content{
   border: none;
   width: 100%;
   margin: 11px 0px 0px 0px;
   resize: none;
 }
 
-.comment-content:focus{
+.comment-content:focus,
+.comment-modify-content:focus{
   outline: none;
 }
 
