@@ -4,11 +4,13 @@
       <navBar></navBar>
       <b-container v-if="boardItems" class="content-container">
         <h3 class="text-center">하루 공부</h3>
-        <b-table hover :fields="boardFields" :items="boardItems">
+        <b-table
+          hover
+          :fields="boardFields"
+          :items="boardItems"
+        >
+
           <template v-slot:cell()="data">
-            <span v-if="data.field.key === 'index'">
-              {{ boardItems.length - data.index }}
-            </span>
             <div
               v-if="data.field.key === 'title'"
               class="board-title"
@@ -18,24 +20,77 @@
                 class="inner-title"
               >
                 {{ data.value }}
-
               </router-link>
               <div class="inner-cnt-comment">
                 [{{ data.item.cntComment }}]
               </div>
-
             </div>
             <span v-else>
               {{ data.value }}
             </span>
-
           </template>
         </b-table>
-        <b-col class="btn-row text-right">
+
+        <nav class="board-nav" aria-label="Page navigation example">
+          <div></div>
+          <ul class="pagination">
+            <li class="page-item">
+              <span
+                class="page-link"
+                v-if="pagination.curRange!==1"
+                @click="setBoardList((pagination.curRange-2)*pagination.rangeSize+1)"
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </span>
+            </li>
+            <li class="page-item">
+              <span
+                class="page-link"
+                v-if="pagination.prePage"
+                @click="setBoardList(pagination.prePage)"
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&lt;</span>
+              </span>
+            </li>
+            <li
+              v-for="(pageNum, i) in pagination.endPage"
+              v-if="pageNum >= pagination.startPage"
+              class="page-item"
+              :id="'page-item['+i+']'"
+              :key="i"
+            >
+              <span class="page-link" @click="setBoardList(pageNum)">
+                {{ pageNum }}
+              </span>
+            </li>
+            <li class="page-item">
+              <span
+                class="page-link"
+                v-if="pagination.curPage!==pagination.pageCnt"
+                @click="setBoardList(pagination.nextPage)"
+                aria-label="Next"
+              >
+                <span aria-hidden="true">&gt;</span>
+              </span>
+            </li>
+            <li class="page-item">
+              <span
+                class="page-link"
+                v-if="pagination.curRange!==pagination.rangeCnt"
+                @click="setBoardList(pagination.curRange*pagination.rangeSize+1)"
+                aria-label="Next"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </span>
+            </li>
+          </ul>
           <router-link :to="{ name: 'BoardWrite' }">
             <b-button variant="secondary">글쓰기</b-button>
           </router-link>
-        </b-col>
+        </nav>
+
       </b-container>
     </div>
     <spinner v-if="isLoading"></spinner>
@@ -59,10 +114,24 @@ export default {
       isLoading: false,
       error: null,
       boardItems: [],
-      boardFields: undefined
+      boardFields: undefined,
+      pagination: {
+        curPage: 1,
+        curRange: undefined,
+        pageSize: undefined,
+        startPage: undefined,
+        endPage: undefined,
+        prePage: undefined,
+        nextPage: undefined,
+        rangeSize: undefined,
+        listCnt: undefined,
+        rangeCnt: undefined,
+        pageCnt: undefined,
+        startIndex: undefined
+      }
     }
   },
-  created () {
+  async created () {
     this.boardFields = [
       {
         key: 'index',
@@ -118,14 +187,22 @@ export default {
         }
       }
     ]
-    this.setBoardList()
+    await this.setBoardList(1)
   },
   methods: {
-    async setBoardList () {
+    async setBoardList (curPage) {
+      this.boardItems = []
+      this.pagination.curPage = curPage
       try {
         this.isLoading = true
-        const result = await axios.post('/api/board/getBoardList')
+        await this.setBoardPaging()
+        const result = await axios.get('/api/board/getBoardList', {
+          params: {
+            curPage: curPage
+          }
+        })
         result.data.forEach(r => this.boardItems.push({
+          index: this.pagination.listCnt - this.pagination.startIndex - r.rowNum + 1,
           bid: r.bid,
           writer: r.writer,
           title: r.title,
@@ -134,6 +211,28 @@ export default {
           thumbUp: r.thumbUp,
           date: (r.modDate == null ? r.regDate : r.modDate)
         }))
+      } catch (err) {
+        throw new Error(err)
+      } finally {
+        this.isLoading = false
+        Array.from(document.getElementsByClassName('page-item active')).forEach(
+          function (el) {
+            el.classList.remove('active')
+          }
+        )
+        const activePage = document.getElementById('page-item[' + (curPage - 1) + ']')
+        activePage.classList.add('active')
+      }
+    },
+    async setBoardPaging () {
+      try {
+        this.isLoading = true
+        const result = await axios.get('/api/board/getBoardPaging', {
+          params: {
+            curPage: this.pagination.curPage
+          }
+        })
+        this.pagination = result.data
       } catch (err) {
         throw new Error(err)
       } finally {
@@ -168,4 +267,8 @@ export default {
   FONT-WEIGHT: 645;
 }
 
+.board-nav{
+  display: flex;
+  justify-content: space-between;
+}
 </style>

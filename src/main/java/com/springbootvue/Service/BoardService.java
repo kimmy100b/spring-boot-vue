@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BoardService {
     // 게시물 목차 기능
-    List<BoardDTO> getBoardList();
+    List<BoardDTO> getBoardList(int startIndex, int pageSize);
 
     // 게시물 글쓰기 기능
     void addBoard(BoardDTO boardDTO);
@@ -23,4 +23,7 @@ public interface BoardService {
 
     // 게시물 조회수 증가
     void increaseBoardViews(int bid);
+    
+    // 게시물 전체 수
+    int selectBoardListCnt();
 }
