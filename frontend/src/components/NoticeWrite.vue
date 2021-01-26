@@ -2,69 +2,83 @@
   <div>
     <navBar></navBar>
     <b-container class="content-container">
-      <b-row>
-        <b-col class="notice-title text-center">
-          <span class="notice-title-label">공지사항</span>
-        </b-col>
-      </b-row>
-      <b-form>
-        <b-form-group>
-          <b-form-input
-            class="title-input"
-            v-model="notice.title"
-            placeholder="TITLE"
-            required
+      <h1>공지 사항</h1>
+      <hr>
+      <validation-observer ref="observer" v-slot="{ handleSubmit }">
+        <b-form @submit.stop.prevent="handleSubmit(save)">
+          <validation-provider
+            :rules="{ required: true }"
+            v-slot="validationContext"
           >
-            {{notice.title}}
-          </b-form-input>
-        </b-form-group>
-        <hr>
-        <b-form-group>
-          <tiptapEditor
-            class="tiptap-editor"
-            ref="tiptapEditor"
-          />
-        </b-form-group>
-        <b-form-group>
-          <b-form-file
-            v-model="notice.files"
-            placeholder="파일을 선택해주세요."
-            drop-placeholder="파일을 드래그 & 드롭 해주세요"
-            multiple
+            <b-form-group label="제목 : ">
+              <b-form-input
+                class="title-input"
+                v-model="notice.title"
+                placeholder="제목을 입력해 주세요."
+                :state="getValidationState(validationContext)"
+              >
+                {{ notice.title }}
+              </b-form-input>
+              <b-form-invalid-feedback>
+                제목을 입력해주세요
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+          <b-form-group label="내용 : ">
+            <tiptapEditor
+              :class="! isContentValid ? 'tiptap-editor-validation' : 'tiptap-editor'"
+              ref="tiptapEditor"
+            />
+            <span v-if="! isContentValid" class="content-feedback">
+              내용 항목은 필수 정보입니다
+            </span>
+          </b-form-group>
+          <b-form-group>
+            <b-form-file
+              v-model="notice.files"
+              multiple
+            >
+              <template slot="file-name" slot-scope="{ names }">
+                <b-badge variant="dark">{{ names[0] }}</b-badge>
+                <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+                  + {{ names.length - 1 }} More files
+                </b-badge>
+              </template>
+            </b-form-file>
+          </b-form-group>
+          <b-form-group
+            class="border rounded file-list"
+            v-if="notice.files"
           >
-          </b-form-file>
-        </b-form-group>
-        <b-form-group
-          class="border rounded file-list"
-          v-if="notice.files"
-        >
-          <div
-            class="file-label"
-            v-for="(file, idx) in notice.files"
-            :key="idx"
-          >
-            {{file.name}} ({{file.size}})
-          </div>
-        </b-form-group>
-      </b-form>
-      <b-row align-h="between">
-        <b-col>
-          <router-link :to="{ name: 'NoticeList' }">
-            <b-button variant="secondary" size="sm">목록</b-button>
-          </router-link>
-        </b-col>
-        <b-col class="text-right">
-          <b-button
-            variant="info"
-            size="sm"
-            @click="save"
-          >
-            저장
-          </b-button>
-        </b-col>
-      </b-row>
+            <div
+              class="file-label"
+              v-for="(file, idx) in notice.files"
+              :key="idx"
+            >
+              {{ file.name }} ({{ file.size }})
+            </div>
+          </b-form-group>
+
+          <b-row align-h="between">
+            <b-col>
+              <router-link :to="{ name: 'NoticeList' }">
+                <b-button variant="secondary" size="sm">목록</b-button>
+              </router-link>
+            </b-col>
+            <b-col class="text-right">
+              <b-button
+                variant="info"
+                size="sm"
+                type="submit"
+              >
+                저장
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-form>
+      </validation-observer>
     </b-container>
-    <spinner v-if="isLoading" />
+    <spinner v-if="isLoading"/>
   </div>
 </template>
 
@@ -73,7 +87,6 @@ import NavBar from './NavBar.vue'
 import Spinner from './Spinner.vue'
 import TiptapEditor from './TiptapEditor.vue'
 import axios from 'axios'
-
 export default {
   name: 'NoticeWrite',
   components: {
@@ -88,6 +101,7 @@ export default {
     return {
       isModify: false,
       isLoading: false,
+      isContentValid: false,
       notice: {
         title: undefined,
         files: undefined
@@ -95,12 +109,23 @@ export default {
     }
   },
   mounted () {
+    this.$watch(() => {
+      if (this.$refs.tiptapEditor.content === undefined) {
+        this.isContentValid = true
+      } else {
+        const contentStr = this.$refs.tiptapEditor.content.replace(/<(\/?)p>/gi, '')
+        this.isContentValid = contentStr.length !== 0
+      }
+    })
     if (this.nid) {
       this.isModify = true
       this.setNotice()
     }
   },
   methods: {
+    getValidationState ({ dirty, validated, valid = null }) {
+      return dirty || validated ? valid : null
+    },
     async setNotice () {
       this.isLoading = true
       try {
@@ -118,6 +143,14 @@ export default {
       }
     },
     async save () {
+      if (this.isContentValid) {
+        if (this.$refs.tiptapEditor.content === undefined) {
+          this.isContentValid = false
+          return
+        }
+      } else {
+        return
+      }
       this.isLoading = true
       try {
         const apiUrl = this.isModify ? '/api/notice/editNotice' : '/api/notice/addNotice'
@@ -129,7 +162,7 @@ export default {
           params = Object.assign(params, {nid: this.nid})
         }
         await axios.post(apiUrl, params)
-        await this.$router.push({ name: 'NoticeList' }) // TODO 리스트 말고 View 로 보내는게 좋을듯?
+        await this.$router.push({ name: 'NoticeList' })
       } catch (err) {
         throw new Error(err)
       } finally {
@@ -142,31 +175,8 @@ export default {
 
 <style scoped>
   .content-container {
-    padding: 30px;
-  }
-  .notice-title {
-    padding: 30px;
-  }
-  .title-input {
-    font-size: 2rem;
-    font-weight: bold;
-    height: 50px;
-    border: none;
-    color: #686868;
-  }
-  .title-input:focus {
-    outline: none 0 !important;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-  }
-  .title-input::placeholder {
-    font-size: 2rem;
-    font-style: italic;
-    color: lightgray;
-  }
-  .notice-title-label {
-    font-size: 1.2rem;
+    margin-top: 50px;
+    padding: 20px;
   }
   .file-list {
     padding: 5px;
@@ -175,6 +185,11 @@ export default {
   }
   .file-label {
     width: 100%;
+    padding: 0 10px;
+  }
+  .content-feedback{
+    color: #dc3545;
+    font-size: small;
   }
   .tiptap-editor {
     height: 400px;
@@ -182,21 +197,21 @@ export default {
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.04) 0 4px 16px 0;
     transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+    border: 1px solid rgba(0, 0, 0, 0.3);
   }
   .tiptap-editor:focus-within {
     /*transform: translateY(-8px);*/
     box-shadow: rgba(0, 0, 0, 0.08) 0 12px 20px 0;
   }
-  >>> .custom-file-label:focus-within {
-    outline: none 0 !important;
-    box-shadow: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
+  .tiptap-editor-validation {
+    height: 400px;
+    overflow-y: auto;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.04) 0 4px 16px 0;
+    transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+    border: 1px solid #dc3545;
   }
-  >>> .custom-file-label {
-    border: none;
-  }
-  >>> .custom-file-label::after {
-    border-radius: 0.25rem;
+  >>> .ProseMirror{
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
   }
 </style>
