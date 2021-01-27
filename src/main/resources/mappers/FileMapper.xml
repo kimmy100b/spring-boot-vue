@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springbootvue.dao.FileDAO">
+    <!-- 첨부파일 추가 -->
+    <insert id="addFile" parameterType="com.springbootvue.dto.FileDTO">
+        insert into file(post_type, post_id, file_name, file_size, file_path, upload_user, upload_date)
+        values (
+            #{postType},
+            #{postId},
+            #{fileName},
+            #{fileSize},
+            #{filePath},
+            #{uploadUser},
+            utc_timestamp()
+        )
+    </insert>
+
+    <!-- 해당 게시물의 첨부파일 찾기 -->
+    <select id="getFileList" resultType="com.springbootvue.dto.FileDTO">
+        select *
+        from
+            file
+        where
+            post_type = #{postType} and post_id = #{postId}
+    </select>
+
+    <!-- fid를 이용해 첨부파일 찾기-->
+    <select id="findById" resultType="com.springbootvue.dto.FileDTO">
+        select *
+        from
+            file
+        where
+            f_id = #{fid}
+    </select>
+
+    <!-- 게시물 삭제 시 해당 폴더 삭제-->
+    <delete id="deleteFolder">
+        delete from file
+        where
+            post_type = #{postType} and post_id = #{postId}
+    </delete>
+
+    <!-- 첨부파일 삭제-->
+    <delete id="deleteFile">
+        delete from file
+        where
+            f_id = #{fid}
+    </delete>
+</mapper>

@@ -29,5 +29,8 @@ public interface NoticeDAO {
         @Param("id") Integer id,
         @Param("title") String title,
         @Param("content") String content);
+
+    // 공지사항 nid 가져오기
+    int getNoticeNid();
 }
 
