@@ -17,9 +17,9 @@ public class BoardController {
     final private BoardService boardService;
 
     @Autowired
-    public BoardController(BoardServiceImpl boardServiceImpl) {
+    public BoardController(BoardService boardService) {
 
-        this.boardService = boardServiceImpl;
+        this.boardService = boardService;
     }
 
     // 게시판 목록 가져오기

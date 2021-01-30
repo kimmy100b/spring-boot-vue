@@ -66,11 +66,17 @@
                     </span>
                     <div class="comment-item-info">
                       {{ dateFormatter(commentItem.regDate) }}
-                      <a>답글쓰기</a>
+                      <span class="comment-item-info-modify">답글쓰기</span>
                       <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
                       <div class="comment-item-btn">
-                        <span @click="openEditor(idx)">수정</span>
-                        <span @click="deleteComment(commentItem.cid)">삭제</span>
+                        <span
+                          @click="openEditor(idx)"
+                          class="comment-item-btn-modify"
+                        >수정</span>
+                        <span
+                          @click="deleteComment(commentItem.cid)"
+                          class="comment-item-btn-delete"
+                        >삭제</span>
                       </div>
                     </div>
                     <!-- end comment-item-info -->
@@ -189,7 +195,6 @@ export default {
       isLoading: false,
       boardView: [],
       cntComment: 0,
-      // showEditor: false,
       isModifyComment: false,
       commentList: [],
       thumbIcon: 'far',
@@ -318,10 +323,20 @@ export default {
       }
     },
     async onCommentSubmit (cid) {
-      this.isLoading = true
       if (cid) {
+        if (this.modifyComment.content === '') {
+          alert('댓글 내용을 입력해주세요.')
+          return false
+        }
         this.isModifyComment = true
+      } else {
+        if (this.comment.content === '' ||
+          this.comment.content === undefined) {
+          alert('댓글 내용을 입력해주세요.')
+          return false
+        }
       }
+      this.isLoading = true
       try {
         const apiUrl = this.isModifyComment ? '/api/comments/modifyComment' : '/api/comments/addComment'
         let data = {
@@ -464,10 +479,21 @@ export default {
 .comment-item-writer{
   font-weight: 600;
 }
+.comment-item-content{
+  word-break: break-all;
+}
 
-.comment-item-info{
+.comment-item-info,
+.comment-item-info-modify{
   font-size: 12px;
   color: gray;
+}
+
+.comment-item-info-modify:hover,
+.comment-item-btn-modify:hover,
+.comment-item-btn-delete:hover{
+  color: #dc3545;
+  cursor: pointer;
 }
 
 .form-comment,

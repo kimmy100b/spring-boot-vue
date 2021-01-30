@@ -48,11 +48,11 @@
           </validation-provider>
 
           <b-form-group id="board-content" label="내용 : " label-for="input-content">
-              <span v-if="isContentDirty" class="content-feedback">
+              <span v-if="! isContentValid" class="content-feedback">
                 내용 항목은 필수 정보입니다
               </span>
             <tiptapEditor
-              class="tiptap-editor"
+              :class="! isContentValid ? 'tiptap-editor-validation' : 'tiptap-editor'"
               ref="tiptapEditor"
               v-model="board.content"
               placeholder="내용을 입력하세요."
@@ -115,7 +115,7 @@ export default {
       isModify: false,
       isLoading: false,
       isUploading: false,
-      isContentDirty: false,
+      isContentValid: false,
       board: {
         writer: null,
         title: null,
@@ -124,6 +124,20 @@ export default {
     }
   },
   mounted () {
+    this.$watch(() => {
+      if (this.$refs.tiptapEditor.content === undefined) {
+        this.isContentValid = true
+      } else {
+        const contentStr = this.$refs.tiptapEditor.content
+          .replace(/<(\/?)p>/gi, '')
+          .replace(/<(\/?)h1>/gi, '')
+          .replace(/<(\/?)h2>/gi, '')
+          .replace(/<(\/?)h3>/gi, '')
+          .replace(/<(\/?)pre>/gi, '')
+          .replace(/<(\/?)code>/gi, '')
+        this.isContentValid = (contentStr.length !== 0)
+      }
+    })
     if (this.bid) {
       this.isModify = true
       this.getBoardView()
@@ -150,9 +164,13 @@ export default {
       }
     },
     async onSubmit () {
-      if (this.$refs.tiptapEditor.content === undefined) {
-        this.isContentDirty = true
-        return -1
+      if (this.isContentValid) {
+        if (this.$refs.tiptapEditor.content === undefined) {
+          this.isContentValid = false
+          return
+        }
+      } else {
+        return
       }
       this.isUploading = true
       try {
@@ -200,6 +218,15 @@ export default {
 .tiptap-editor:focus-within {
   /*transform: translateY(-8px);*/
   box-shadow: rgba(0, 0, 0, 0.08) 0 12px 20px 0;
+}
+
+.tiptap-editor-validation {
+  height: 400px;
+  overflow-y: auto;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 4px 16px 0;
+  transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
+  border: 1px solid #dc3545;
 }
 
 >>> .ProseMirror{
