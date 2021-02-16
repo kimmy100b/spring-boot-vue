@@ -1,8 +1,10 @@
 package com.springbootvue.Service;
 
+import com.springbootvue.dto.FileDTO;
 import com.springbootvue.dto.NoticeDTO;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -21,8 +23,8 @@ public interface NoticeService {
     public void deleteNotice(Integer id);
 
     // 공지사항 등록하기
-    public void addNotice(NoticeDTO noticeDTO);
+    public void addNotice(NoticeDTO noticeDTO) throws IOException;
 
     // 공지사항 수정하기
-    public void editNotice(NoticeDTO noticeDTO);
+    public void editNotice(NoticeDTO noticeDTO) throws IOException;
 }

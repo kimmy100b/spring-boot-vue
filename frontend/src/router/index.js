@@ -24,9 +24,9 @@ import Index from '../components/Index.vue'
 import BoardList from '../components/board/BoardList.vue'
 import BoardView from '../components/board/BoardView.vue'
 import BoardWrite from '../components/board/BoardWrite.vue'
-import NoticeList from '../components/NoticeList.vue'
-import NoticeView from '../components/NoticeView.vue'
-import NoticeWrite from '../components/NoticeWrite.vue'
+import NoticeList from '../components/notice/NoticeList.vue'
+import NoticeView from '../components/notice/NoticeView.vue'
+import NoticeWrite from '../components/notice/NoticeWrite.vue'
 
 Vue.use(Router)
 

@@ -40,9 +40,9 @@
 
 <script>
 import axios from 'axios'
-import NavBar from './NavBar.vue'
-import Spinner from './Spinner.vue'
-import * as DateUtil from '../common/DateUtil.js'
+import NavBar from '../NavBar.vue'
+import Spinner from '../Spinner.vue'
+import * as DateUtil from '../../common/DateUtil.js'
 
 export default {
   name: 'NoticeList',

@@ -30,6 +30,19 @@
           <div v-html="noticeView.content"></div>
         </b-col>
       </b-row>
+      <b-row v-if="fileList.length !== 0">
+        <b-col class="col-label col-2 border-top border-bottom">첨부파일</b-col>
+        <b-col class="col border-top border-bottom">
+          <div
+            v-for="(file,idx) in fileList"
+            :key="idx"
+            @click="fileDownload(file.fid, file.fileName)"
+            class="notice-file-name"
+          >
+            {{ file.fileName }}({{ getFileSize(file.fileSize) }})
+          </div>
+        </b-col>
+      </b-row>
       <b-row align-h="between">
         <b-col class="btn-row">
           <router-link :to="{ name: 'NoticeList' }">
@@ -71,9 +84,12 @@
 
 <script>
 import axios from 'axios'
-import * as DateUtil from '../common/DateUtil.js'
-import NavBar from './NavBar.vue'
-import Spinner from './Spinner.vue'
+import * as DateUtil from '../../common/DateUtil.js'
+import * as FileUtil from '../../common/FileUtil.js'
+import NavBar from '../NavBar.vue'
+import Spinner from '../Spinner.vue'
+
+const POST_TYPE = 'notice'
 
 export default {
   name: 'NoticeView',
@@ -85,20 +101,27 @@ export default {
     return {
       isLoading: false,
       isOwner: false, // TODO 로그인 기능 구현 후, 수정, 삭제 버튼 작성자에게만 보이게 하기
-      noticeView: []
+      noticeView: [],
+      fileList: []
     }
   },
   props: {
     nid: { type: [String, Number] },
     index: { type: Number }
   },
-  async created () {
+  created () {
     this.getNoticeView()
+    this.getNoticeFiles()
   },
   methods: {
     dateFormatter (date) {
       if (date) {
         return DateUtil.dateToVisualDateStr(new Date(date))
+      }
+    },
+    getFileSize (size) {
+      if (size) {
+        return FileUtil.getFileSize(size)
       }
     },
     showModal (modalId) {
@@ -117,6 +140,29 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    async getNoticeFiles () {
+      const file = await axios.get('/api/files/getFileList', {
+        params: {
+          type: POST_TYPE,
+          id: this.nid
+        }})
+      this.fileList = file.data
+    },
+    async fileDownload (fid, fileName) {
+      const fileResult = await axios.get('/api/files/download', {
+        params: {
+          id: fid
+        },
+        responseType: 'blob'
+      })
+
+      const url = window.URL.createObjectURL(fileResult.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', fileName)
+      document.body.appendChild(link)
+      link.click()
     },
     async deleteNotice () {
       this.isLoading = true
@@ -170,5 +216,13 @@ export default {
 
   >>> .modal-title {
     font-size: medium;
+  }
+
+  .notice-file-name{
+    color: #1a0dab;
+  }
+
+  .notice-file-name:hover{
+    text-decoration: underline;
   }
 </style>
