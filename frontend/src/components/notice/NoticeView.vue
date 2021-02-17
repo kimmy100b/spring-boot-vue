@@ -220,6 +220,7 @@ export default {
 
   .notice-file-name{
     color: #1a0dab;
+    cursor: pointer;
   }
 
   .notice-file-name:hover{

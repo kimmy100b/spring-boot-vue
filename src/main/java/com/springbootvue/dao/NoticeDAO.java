@@ -8,7 +8,13 @@ import java.util.List;
 public interface NoticeDAO {
 
     // 공지사항 목록 가져오기
-    List<NoticeDTO> getNoticeList();
+    List<NoticeDTO> getNoticeList(
+        @Param("startIndex") Integer startIndex,
+        @Param("pageSize") Integer pageSize
+    );
+
+    // 공지사항 개수 가져오기
+    int getNoticeCnt();
 
     // 특정 공지사항 가져오기
     NoticeDTO getNoticeInfo(@Param("id") Integer id);
