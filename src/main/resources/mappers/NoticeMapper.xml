@@ -11,6 +11,14 @@
             notice
         order by
             ifnull(mod_date, reg_date) desc
+        limit #{startIndex}, #{pageSize}
+    </select>
+
+    <!--  공지사항 개수 가져오기  -->
+    <select id="getNoticeCnt" resultType="int">
+        select count(*)
+        from
+            notice
     </select>
 
     <!--  특정 공지사항 가져오기  -->

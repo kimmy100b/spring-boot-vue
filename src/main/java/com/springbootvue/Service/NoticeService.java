@@ -11,7 +11,10 @@ import java.util.List;
 public interface NoticeService {
 
     // 공지사항 목록 가져오기
-    public List<NoticeDTO> getNoticeList();
+    public List<NoticeDTO> getNoticeList(Integer startIndex, Integer pageSize);
+
+    // 공지사항 개수 가져오기
+    public int getNoticeCnt();
 
     // 공지사항 상세보기 가져오기 + 조회수 증가
     public NoticeDTO getNoticeAndIncreaseViews(Integer id);

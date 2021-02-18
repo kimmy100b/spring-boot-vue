@@ -14,7 +14,7 @@
       >
         <template v-slot:cell()="data">
           <div v-if="data.field.key === 'index'">
-              {{ noticeItems.length - data.index }}
+              {{ noticeCnt - (data.index + pagination.startIndex) }}
           </div>
           <router-link v-if="data.field.key === 'title'" :to="{ name: 'NoticeView', params: { nid: data.item.nid }}">
             <div class="table-cell-value">
@@ -33,6 +33,65 @@
           </router-link>
         </b-col>
       </b-row>
+      <nav>
+        <ul class="pagination">
+          <li
+            class="page-item"
+            :class="{'disabled': pagination.curPage === 1}"
+          >
+            <span
+              @click="setNoticeListAndPaging(1)"
+              class="page-link">
+              &laquo;
+            </span>
+          </li>
+          <li
+            class="page-item"
+            :class="{'disabled': pagination.curPage === 1}"
+          >
+            <span
+              @click="setNoticeListAndPaging(pagination.prePage)"
+              class="page-link">
+              &lt;
+            </span>
+          </li>
+          <li
+            class="page-item"
+            v-for="pageNum in pagination.visiblePages"
+            :key="pageNum"
+          >
+            <span
+              @click="setNoticeListAndPaging(pageNum)"
+              class="page-link"
+              :class="{'clicked': pageNum === pagination.curPage}"
+            >
+              {{ pageNum }}
+            </span>
+          </li>
+          <li
+            class="page-item"
+            :class="{'disabled': pagination.curPage === pagination.pageCnt}"
+          >
+            <span
+              class="page-link"
+              @click="setNoticeListAndPaging(pagination.nextPage)"
+            >
+              &gt;
+            </span>
+          </li>
+          <li
+            class="page-item"
+            :class="{'disabled': pagination.curPage === pagination.pageCnt}"
+          >
+            <span
+              @click="setNoticeListAndPaging(pagination.pageCnt)"
+              class="page-link"
+            >
+              &raquo;
+            </span>
+          </li>
+        </ul>
+      </nav>
     </b-container>
     <spinner v-if="isLoading" />
   </div>
@@ -54,7 +113,23 @@ export default {
     return {
       isLoading: false,
       noticeFields: undefined,
-      noticeItems: undefined
+      noticeItems: undefined,
+      noticeCnt: undefined,
+      pagination: {
+        curPage: 1,
+        curRange: undefined,
+        pageSize: undefined,
+        startPage: undefined,
+        endPage: undefined,
+        prePage: undefined,
+        nextPage: undefined,
+        rangeSize: undefined,
+        listCnt: undefined,
+        rangeCnt: undefined,
+        pageCnt: undefined,
+        startIndex: undefined,
+        visiblePages: undefined,
+      }
     }
   },
   created () {
@@ -79,14 +154,28 @@ export default {
     ]
   },
   mounted () {
-    this.getNoticeList()
+    this.setNoticeListAndPaging()
   },
   methods: {
-    async getNoticeList () {
+    getVisiblePages () {
+      this.pagination.visiblePages = [];
+      for (let i = this.pagination.startPage; i <= this.pagination.endPage; i++) {
+        this.pagination.visiblePages.push(i);
+      }
+    },
+    async setNoticeListAndPaging (curPage) {
       this.isLoading = true
       try {
-        const result = await axios.get('/api/notice/getNoticeList')
-        this.noticeItems = result.data
+        this.pagination.curPage = curPage || this.pagination.curPage
+        const result = await axios.get('/api/notice/getNoticeList', {
+          params: {
+            curPage: this.pagination.curPage
+          }
+        })
+        this.noticeCnt = result.data.noticeCnt
+        this.noticeItems = result.data.noticeList
+        this.pagination = result.data.pagination
+        this.getVisiblePages()
       } catch (err) {
         throw err
       } finally {
@@ -113,5 +202,22 @@ export default {
   }
   .table-cell-value:hover {
     color: #17a2b8;
+  }
+  .disabled {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .clicked {
+    color: white;
+    background-color: #17a2b8;
+  }
+  nav {
+    text-align: center;
+  }
+  nav ul {
+    display: inline-block;
+  }
+  nav li {
+    float: left;
   }
 </style>

@@ -26,14 +26,14 @@ public class NoticeServiceImpl implements NoticeService {
         this.fileService = fileService;
     }
 
-    @Autowired
-
-
     // 공지사항 목록 가져오기
     @Override
-    public List<NoticeDTO> getNoticeList() {
-        return noticeDAO.getNoticeList();
+    public List<NoticeDTO> getNoticeList(Integer startIndex, Integer pageSize) {
+        return noticeDAO.getNoticeList(startIndex, pageSize);
     }
+
+    @Override
+    public int getNoticeCnt() { return noticeDAO.getNoticeCnt(); }
 
     // 공지사항 상세보기 가져오기 + 조회수 증가
     @Override
