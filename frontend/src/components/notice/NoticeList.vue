@@ -177,7 +177,7 @@ export default {
         this.pagination = result.data.pagination
         this.getVisiblePages()
       } catch (err) {
-        throw err
+        throw new Error(err)
       } finally {
         this.isLoading = false
       }

@@ -56,12 +56,13 @@
             </li>
             <li
               v-for="(pageNum, i) in pagination.endPage"
-              v-if="pageNum >= pagination.startPage"
               class="page-item"
               :id="'page-item['+i+']'"
               :key="i"
             >
-              <span class="page-link" @click="setBoardList(pageNum)">
+              <span
+                  v-if="pageNum >= pagination.startPage"
+                  class="page-link" @click="setBoardList(pageNum)">
                 {{ pageNum }}
               </span>
             </li>
@@ -264,7 +265,7 @@ export default {
 .inner-cnt-comment{
   padding-left: 7px;
   color: red;
-  FONT-WEIGHT: 645;
+  FONT-WEIGHT: 600;
 }
 
 .board-nav{

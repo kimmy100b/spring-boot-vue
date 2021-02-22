@@ -1,7 +1,6 @@
 package com.springbootvue.controller;
 
 import com.springbootvue.Service.BoardService;
-import com.springbootvue.Service.BoardServiceImpl;
 import com.springbootvue.dto.BoardDTO;
 import com.springbootvue.dto.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
