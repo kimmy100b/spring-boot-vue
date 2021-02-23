@@ -31,7 +31,7 @@ public class FileServiceImpl implements FileService{
         this.fileDAO = fileDAO;
     }
 
-    // 첨부파일 추가
+    /** 첨부파일 추가하기 **/
     public void addFiles(String postType, int nid, List<MultipartFile> files) throws IOException {
         String basePath = ROOT_PATH + "/" + "uploaded" + "/" + postType + "/" + nid;
 
@@ -65,21 +65,21 @@ public class FileServiceImpl implements FileService{
         }
     }
 
-    // 특정 게시글의 파일 목록 가져오기
+    /** 해당 게시물의 첨부파일 가져오기 **/
     @Override
     public List<FileDTO> getFileList(String postType, int postId) {
 
         return fileDAO.getFileList(postType, postId);
     }
 
-    // fid로 첨부파일 찾기
+    /** fid로 첨부파일 찾기 **/
     @Override
     public FileDTO findById(int id) {
         FileDTO fileDTO = fileDAO.findById(id);
         return fileDTO;
     }
 
-    // 서버에서 첨부파일 폴더 삭제
+    /** 첨부 파일 폴더 삭제 **/
     @Override
     public void deleteFolder(String postType, int postId) {
         int cnt = fileDAO.deleteFolder(postType, postId);
@@ -107,7 +107,7 @@ public class FileServiceImpl implements FileService{
         }
     }
 
-    // 선택한 첨부파일 삭제
+    /** 선택한 첨부 파일 삭제 **/
     @Transactional
     @Override
     public void deleteFile(String postType, int postId, List<Integer> delFids) {

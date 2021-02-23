@@ -23,9 +23,9 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public List<CommentDTO> getCommentList(Integer gubun, Integer fkId) {
+    public List<CommentDTO> getCommentList(String postType, int postId) {
 
-        return commentDAO.getCommentList(gubun, fkId);
+        return commentDAO.getCommentList(postType, postId);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void deleteComment(Integer cid, Integer fkId) {
+    public void deleteComment(int cid, int postId) {
         int comRs = commentDAO.deleteComment(cid);
         if(comRs != 1){
             showMessageDialog(null, "삭제 실패하였습니다.");
@@ -54,8 +54,16 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public int getCntComment(Integer gubun, Integer fkId) {
+    public int getCntComment(String postType, int postId) {
 
-        return commentDAO.getCntComment(gubun, fkId);
+        return commentDAO.getCntComment(postType, postId);
+    }
+
+    @Override
+    public void deleteCommentByBoard(int postId){
+        int rs = commentDAO.deleteCommentByBoard(postId);
+        if (rs < 0) {
+            showMessageDialog(null, "댓글 삭제에 실패하였습니다.");
+        }
     }
 }

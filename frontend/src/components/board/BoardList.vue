@@ -31,27 +31,36 @@
           </template>
         </b-table>
 
-        <nav class="board-nav" aria-label="Page navigation example">
+        <!-- 게시판 페이징 -->
+        <nav class="board-nav" aria-label="Page navigation">
           <div></div>
           <ul class="pagination">
-            <li class="page-item">
+            <li
+                class="page-item"
+                :class="{'disabled': pagination.curPage === 1}"
+            >
               <span
                 class="page-link"
-                v-if="pagination.curRange!==1"
-                @click="setBoardList((pagination.curRange-2)*pagination.rangeSize+1)"
-                aria-label="Previous"
+                @click="setBoardList(1)"
+                aria-label="First"
               >
-                <span aria-hidden="true">&laquo;</span>
+                <font-awesome-icon
+                    :icon="[ 'fas','angle-double-left']"
+                />
               </span>
             </li>
-            <li class="page-item">
+            <li
+                class="page-item"
+                :class="{'disabled': pagination.prePage === 0}"
+            >
               <span
                 class="page-link"
-                v-if="pagination.prePage"
                 @click="setBoardList(pagination.prePage)"
                 aria-label="Previous"
               >
-                <span aria-hidden="true">&lt;</span>
+                <font-awesome-icon
+                    :icon="[ 'fas','angle-left']"
+                />
               </span>
             </li>
             <li
@@ -62,28 +71,40 @@
             >
               <span
                   v-if="pageNum >= pagination.startPage"
-                  class="page-link" @click="setBoardList(pageNum)">
+                  class="page-link"
+                  :class="{'active': pageNum === pagination.curPage}"
+                  @click="setBoardList(pageNum)"
+              >
                 {{ pageNum }}
               </span>
             </li>
-            <li class="page-item">
+            <li
+                class="page-item"
+                :class="{'disabled': pagination.curPage === pagination.pageCnt}"
+            >
               <span
                 class="page-link"
-                v-if="pagination.curPage!==pagination.pageCnt"
                 @click="setBoardList(pagination.nextPage)"
                 aria-label="Next"
               >
-                <span aria-hidden="true">&gt;</span>
+                <font-awesome-icon
+                    :icon="[ 'fas','angle-right']"
+                />
               </span>
             </li>
-            <li class="page-item">
+            <li
+                class="page-item"
+                :class="{'disabled': pagination.curPage === pagination.pageCnt}"
+            >
               <span
                 class="page-link"
                 v-if="pagination.curRange!==pagination.rangeCnt"
-                @click="setBoardList(pagination.curRange*pagination.rangeSize+1)"
-                aria-label="Next"
+                @click="setBoardList(pagination.pageCnt)"
+                aria-label="End"
               >
-                <span aria-hidden="true">&raquo;</span>
+                <font-awesome-icon
+                    :icon="[ 'fas','angle-double-right']"
+                />
               </span>
             </li>
           </ul>
@@ -216,13 +237,6 @@ export default {
         throw new Error(err)
       } finally {
         this.isLoading = false
-        Array.from(document.getElementsByClassName('page-item active')).forEach(
-          function (el) {
-            el.classList.remove('active')
-          }
-        )
-        const activePage = document.getElementById('page-item[' + (curPage - 1) + ']')
-        activePage.classList.add('active')
       }
     },
     async setBoardPaging () {
@@ -249,27 +263,32 @@ export default {
   padding-top: 50px;
 }
 
-.board-title{
+.board-title {
   display: flex;
 }
 
-.inner-title{
+.inner-title {
   text-decoration: none;
   color: black;
 }
 
-.inner-title:hover{
+.inner-title:hover {
   text-decoration: underline;
 }
 
-.inner-cnt-comment{
+.inner-cnt-comment {
   padding-left: 7px;
   color: red;
   FONT-WEIGHT: 600;
 }
 
-.board-nav{
+.board-nav {
   display: flex;
   justify-content: space-between;
+}
+
+.active {
+  background-color: #007bff;
+  color: white;
 }
 </style>
