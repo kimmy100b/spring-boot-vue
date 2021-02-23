@@ -2,7 +2,6 @@ package com.springbootvue.controller;
 
 import com.springbootvue.Service.FileService;
 import com.springbootvue.Service.NoticeService;
-import com.springbootvue.dto.FileDTO;
 import com.springbootvue.dto.NoticeDTO;
 import com.springbootvue.dto.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;

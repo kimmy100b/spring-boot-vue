@@ -1,10 +1,7 @@
 package com.springbootvue.Service;
 
-import com.springbootvue.dao.FileDAO;
 import com.springbootvue.dao.NoticeDAO;
-import com.springbootvue.dto.FileDTO;
 import com.springbootvue.dto.NoticeDTO;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

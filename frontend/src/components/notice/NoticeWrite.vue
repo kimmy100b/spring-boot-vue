@@ -151,9 +151,9 @@ export default {
   computed: {
     showModal: {
       get () {
-        if (this.notice.files) {
-          return this.notice.files.some(file => file.size >= MAX_FILE_SIZE)
-        }
+        if (! this.notice.files)
+          return;
+        return this.notice.files.some(file => file.size >= MAX_FILE_SIZE)
       },
       set () {
         const idx = this.notice.files.findIndex(file => file.size >= 0)

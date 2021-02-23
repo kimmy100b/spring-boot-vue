@@ -1,6 +1,5 @@
 package com.springbootvue.Service;
 
-import com.springbootvue.dto.FileDTO;
 import com.springbootvue.dto.NoticeDTO;
 import org.springframework.stereotype.Service;
 

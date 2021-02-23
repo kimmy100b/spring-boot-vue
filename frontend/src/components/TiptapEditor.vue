@@ -200,8 +200,6 @@ export default {
     this.editor.destroy()
   },
   methods: {
-    showImageModal (command) {
-    },
     getVariant (isActive) {
       return isActive ? 'dark' : 'white'
     },

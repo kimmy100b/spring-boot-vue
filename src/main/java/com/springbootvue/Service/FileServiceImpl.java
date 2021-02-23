@@ -3,7 +3,6 @@ package com.springbootvue.Service;
 import com.springbootvue.dao.FileDAO;
 import com.springbootvue.dto.FileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

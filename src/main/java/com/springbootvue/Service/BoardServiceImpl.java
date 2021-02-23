@@ -12,7 +12,7 @@ import java.util.List;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 @Service
-public class BoardServiceImpl implements BoardService{
+public class BoardServiceImpl implements BoardService {
 
     private final BoardDAO boardDAO;
     private final CommentDAO commentDAO;

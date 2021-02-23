@@ -16,7 +16,7 @@ public interface BoardService {
     void modifyBoard(BoardDTO boardDTO);
     
     // 게시물 상세보기
-    BoardDTO getBoardInfo (int bid);
+    BoardDTO getBoardInfo(int bid);
 
     // 게시물 삭제 기능
     void deleteBoard(int bid);
