@@ -1,14 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-// components
+/** components **/
 import Index from '../components/Index.vue'
+// board
 import BoardList from '../components/board/BoardList.vue'
 import BoardView from '../components/board/BoardView.vue'
 import BoardWrite from '../components/board/BoardWrite.vue'
+//notice
 import NoticeList from '../components/notice/NoticeList.vue'
 import NoticeView from '../components/notice/NoticeView.vue'
 import NoticeWrite from '../components/notice/NoticeWrite.vue'
+// user
+import SignUp from '../components/user/SignUp.vue'
+import Login from '../components/user/Login.vue'
 
 Vue.use(VueRouter);
 
@@ -62,6 +67,16 @@ const routes = [
     name: 'BoardModify',
     component: BoardWrite,
     props: true
+  },
+  {
+    path: '/guest/signup',
+    name: 'SignUp',
+    component: SignUp
+  },
+  {
+    path: '/guest/login',
+    name: 'Login',
+    component: Login
   }
 ];
 

@@ -202,8 +202,8 @@ export default {
 }
 
 .content-feedback{
-  color: red;
-  font-size: small;
+  color: #dc3545;
+  font-size: 12.8px;
 }
 
 .tiptap-editor {
