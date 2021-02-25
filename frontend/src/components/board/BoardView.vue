@@ -26,30 +26,46 @@
           <hr>
 
           <div
-            class="board-content"
-            v-html="boardView.content">
+              class="board-content"
+              v-html="boardView.content"
+          >
           </div>
-          <div class="board-icon">
+          <div class="board-icons">
             <!--            TODO : 회원 기능 후-->
             <font-awesome-icon
-              :icon="[ thumbIcon,'thumbs-up']"
-              class="icon-thumb"
-              @click="clickThumb"
+                :icon="[ thumbIcon,'thumbs-up']"
+                class="icon-thumb board-icon"
+                @click="clickThumb"
             />
             <span>{{ boardView.thumbUp }}</span>
             <font-awesome-icon
-              :icon="[ 'far','comment-dots']"
+                :icon="[ 'far','comment-dots']"
+                class="icon-comment board-icon"
             />
             <span>{{ cntComment }}</span>
           </div>
           <hr>
+          <div
+              v-if="fileList.length !== 0"
+              class="board-file"
+          >
+            <span
+                v-for="(file,idx) in fileList"
+                :key="idx"
+                @click="fileDownload(file.fid, file.fileName)"
+                class="board-file-info"
+            >
+              {{ file.fileName }}({{ getFileSize(file.fileSize) }})
+            </span>
+          </div>
+
           <div class="board-comment">
             <h3>댓글</h3>
             <ul class="comment-ul">
               <li
-                v-for="(commentItem, idx) in commentList"
-                :key="idx"
-                class="comment-li"
+                  v-for="(commentItem, idx) in commentList"
+                  :key="idx"
+                  class="comment-li"
               >
                 <b-avatar src="https://doozi316.github.io/assets/images/me.png" size="3rem"></b-avatar>
                 <div class="comment-item">
@@ -57,12 +73,12 @@
                     <span>{{ commentItem.writer }}</span>
                   </div>
                   <div
-                    class="comment-area"
-                    v-if="!commentItem.showEditor"
+                      class="comment-area"
+                      v-if="!commentItem.showEditor"
                   >
                     <span
-                      class="comment-item-content"
-                      v-html="commentItem.content">
+                        class="comment-item-content"
+                        v-html="commentItem.content">
                     </span>
                     <div class="comment-item-info">
                       {{ dateFormatter(commentItem.regDate) }}
@@ -70,40 +86,45 @@
                       <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
                       <div class="comment-item-btn">
                         <span
-                          @click="openEditor(idx)"
-                          class="comment-item-btn-modify"
-                        >수정</span>
+                            @click="openEditor(idx)"
+                            class="comment-btn-modify"
+                        >
+                          수정
+                        </span>
                         <span
-                          @click="deleteComment(commentItem.cid)"
-                          class="comment-item-btn-delete"
-                        >삭제</span>
+                            @click="deleteComment(commentItem.cid)"
+                            class="comment-item-btn-delete"
+                        >
+                          삭제
+                        </span>
                       </div>
                     </div>
                     <!-- end comment-item-info -->
                   </div>
                   <!-- end comment-area -->
                   <b-form
-                    class="form-modify-comment"
-                    v-if="commentItem.showEditor"
+                      class="form-modify-comment"
+                      v-if="commentItem.showEditor"
                   >
                     <textarea
-                      placeholder="댓글을 입력하세요"
-                      class="comment-modify-content"
-                      v-model="modifyComment.content"
+                        placeholder="댓글을 입력하세요"
+                        class="comment-modify-content"
+                        v-model="modifyComment.content"
                     ></textarea>
 
                     <div class="text-right">
                       <b-button
-                        variant="secondary"
-                        size="sm"
-                        @click="onCommentSubmit(commentItem.cid)"
+                          class="comment-btn-modify"
+                          variant="secondary"
+                          size="sm"
+                          @click="onCommentSubmit(commentItem.cid)"
                       >
                         수정
                       </b-button>
                       <b-button
-                        variant="secondary"
-                        size="sm"
-                        @click="closeEditor(idx)"
+                          variant="secondary"
+                          size="sm"
+                          @click="closeEditor(idx)"
                       >
                         취소
                       </b-button>
@@ -119,17 +140,17 @@
               >신윤정</span>
               <!--                  v-model="comment.writer"-->
               <textarea
-                placeholder="댓글을 입력하세요"
-                rows="1"
-                class="comment-content"
-                v-model="comment.content"
+                  placeholder="댓글을 입력하세요"
+                  rows="1"
+                  class="comment-content"
+                  v-model="comment.content"
               ></textarea>
 
               <div class="text-right">
                 <b-button
-                  variant="secondary"
-                  size="sm"
-                  @click="onCommentSubmit(0)"
+                    variant="secondary"
+                    size="sm"
+                    @click="onCommentSubmit(0)"
                 >
                   등록
                 </b-button>
@@ -147,12 +168,18 @@
             </b-col>
             <b-col class="btn-row text-right">
               <router-link :to="{ name: 'BoardModify', params: { bid: bid } }">
-                <b-button variant="info" size="sm">수정</b-button>
+                <b-button
+                    class="board-btn-modify"
+                    variant="info"
+                    size="sm"
+                >
+                  수정
+                </b-button>
               </router-link>
               <b-button
-                variant="danger"
-                size="sm"
-                @click="showModal('delete-check-modal')"
+                  variant="danger"
+                  size="sm"
+                  @click="showModal('delete-check-modal')"
               >
                 삭제
               </b-button>
@@ -161,13 +188,13 @@
         </div>
         <!-- end board-btn-->
         <b-modal
-          id="delete-check-modal"
-          title="삭제 확인"
-          button-size="sm"
-          header-text-variant="white"
-          header-bg-variant="primary"
-          hide-header-close
-          @ok="deleteBoard()"
+            id="delete-check-modal"
+            title="삭제 확인"
+            button-size="sm"
+            header-text-variant="white"
+            header-bg-variant="primary"
+            hide-header-close
+            @ok="deleteBoard()"
         >
           <div>삭제하시겠습니까?</div>
         </b-modal>
@@ -180,9 +207,10 @@
 import axios from 'axios'
 import NavBar from '../NavBar'
 import Spinner from '../Spinner.vue'
-import * as DateUtil from '../../common/DateUtil'
+import * as DateUtil from '../../common/DateUtil.js'
+import * as FileUtil from '../../common/FileUtil.js'
 
-const BOARD_GUBUN = 1
+const POST_TYPE = 'board'
 
 export default {
   name: 'boardView',
@@ -198,6 +226,7 @@ export default {
       isModifyComment: false,
       commentList: [],
       thumbIcon: 'far',
+      fileList: [],
       comment: {
         content: undefined
       },
@@ -212,6 +241,7 @@ export default {
   async created () {
     await this.increaseBoardViews()
     await this.setBoardInfo()
+    await this.setBoardFiles()
     await this.setCommentList()
     await this.setCntComment()
   },
@@ -219,6 +249,11 @@ export default {
     dateFormatter (date) {
       if (date) {
         return DateUtil.dateToVisualDateStr(new Date(date))
+      }
+    },
+    getFileSize (size) {
+      if (size) {
+        return FileUtil.getFileSize(size)
       }
     },
     showModal (modalId) {
@@ -229,7 +264,7 @@ export default {
     },
     async increaseBoardViews () {
       try {
-        await axios.get('api/board/increaseBoardViews', {
+        await axios.get('/api/board/increaseBoardViews', {
           params: {
             bid: this.bid
           }
@@ -253,6 +288,28 @@ export default {
         this.isLoading = false
       }
     },
+    async setBoardFiles () {
+      const file = await axios.get('/api/files/getFileList', {
+        params: {
+          type: POST_TYPE,
+          id: this.bid
+        }})
+      this.fileList = file.data
+    },
+    async fileDownload (fid, fileName) {
+      const fileResult = await axios.get('/api/files/download', {
+        params: {
+          id: fid
+        },
+        responseType: 'blob'
+      })
+      const url = window.URL.createObjectURL(fileResult.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', fileName)
+      document.body.appendChild(link)
+      link.click()
+    },
     async deleteBoard () {
       this.isLoading = true
       try {
@@ -273,13 +330,13 @@ export default {
         this.commentList = []
         const result = await axios.get('/api/comments/getCommentList', {
           params: {
-            gubun: BOARD_GUBUN,
-            fkId: this.bid
+            postType: POST_TYPE,
+            postId: this.bid
           }
         })
         result.data.forEach(r => this.commentList.push({
           cid: r.cid,
-          fkId: r.fkId,
+          postId: r.postId,
           writer: r.writer,
           content: r.content.replace(/(?:\r\n|\r|\n)/g, '<br />'),
           regDate: r.regDate
@@ -295,8 +352,8 @@ export default {
         this.isLoading = true
         const result = await axios.get('/api/comments/getCntComment', {
           params: {
-            gubun: BOARD_GUBUN,
-            fkId: this.bid
+            postType: POST_TYPE,
+            postId: this.bid
           }
         })
         this.cntComment = result.data
@@ -312,7 +369,7 @@ export default {
         await axios.delete('/api/comments/deleteComment', {
           params: {
             cid: cid,
-            fkId: this.bid
+            postId: this.bid
           }})
         await this.setCommentList()
         await this.setCntComment()
@@ -340,9 +397,8 @@ export default {
       try {
         const apiUrl = this.isModifyComment ? '/api/comments/modifyComment' : '/api/comments/addComment'
         let data = {
-          gubun: BOARD_GUBUN,
-          fkId: this.bid,
-          // writer: this.comment.writer,
+          postType: POST_TYPE,
+          postId: this.bid,
           writer: '신윤정'
         }
         if (this.isModifyComment) {
@@ -385,29 +441,30 @@ export default {
   padding: 20px;
 }
 
-.board{
+.board {
   border: 1px solid darkgray;
   margin-bottom: 10px;
   padding: 29px;
   border-radius: 6px;
 }
 
-.board-info{
+.board-info {
   display: flex;
   align-items: center;
 }
 
 .board-info-text,
-.comment-item{
+.comment-item {
   margin-left: 5px;
 }
-.info-date-view{
+
+.info-date-view {
   display: flex;
   align-items: center;
   color: gray;
 }
 
-.board-date{
+.board-date {
   margin-right: 8px;
 }
 
@@ -415,8 +472,18 @@ export default {
   margin-bottom: 15px;
 }
 
-.board-icon{
+.board-icons {
   margin-top: 45px;
+}
+
+.board-icon,
+.board-btn-modify,
+.comment-btn-modify {
+  margin-right: 5px;
+}
+
+.icon-comment {
+  margin-left: 10px;
 }
 
 /* TODO : 엄지척 넣고 디자인 수정하기 */
@@ -439,10 +506,10 @@ export default {
   25% {
     transform: rotate(-0.1turn);
   }
-  50%{
+  50% {
     transform: rotate(0turn);
   }
-  75%{
+  75% {
     transform: rotate(0.1turn);
   }
   100% {
@@ -450,54 +517,73 @@ export default {
   }
 }
 
-.icon-thumb:hover{
+.icon-thumb:hover {
   animation: thumbMove 1s ease-in-out infinite;
 }
 
-.icon-thumb:active{
+.icon-thumb:active {
   animation: thumbSize 0.5s linear;
 }
 
-.comment-ul{
+.board-file {
+  margin-bottom: 2%;
+}
+
+.board-file-info {
+  padding: 5px;
+  margin: 0px 5px 0px 5px;
+  font-size: small;
+  border: solid 1.5px gray;
+  border-radius: 6px;
+  background-color: #F5F6F7;
+}
+
+.board-file-info:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.comment-ul {
   padding: 0px;
 }
 
-.comment-li{
+.comment-li {
   display: flex;
   padding: 12px 23px 10px 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.comment-li:first-child{
+.comment-li:first-child {
   border-top: none;
 }
 
-.comment-item{
+.comment-item {
   width: 100%;
 }
 
-.comment-item-writer{
+.comment-item-writer {
   font-weight: 600;
 }
-.comment-item-content{
+
+.comment-item-content {
   word-break: break-all;
 }
 
 .comment-item-info,
-.comment-item-info-modify{
+.comment-item-info-modify {
   font-size: 12px;
   color: gray;
 }
 
 .comment-item-info-modify:hover,
 .comment-item-btn-modify:hover,
-.comment-item-btn-delete:hover{
+.comment-item-btn-delete:hover {
   color: #dc3545;
   cursor: pointer;
 }
 
 .form-comment,
-.form-modify-comment{
+.form-modify-comment {
   margin: 12px 0 29px;
   padding: 16px 10px 10px 18px;
   border: 2px solid darkgray;
@@ -505,7 +591,7 @@ export default {
 }
 
 .comment-content,
-.comment-modify-content{
+.comment-modify-content {
   border: none;
   width: 100%;
   margin: 11px 0px 0px 0px;
@@ -513,11 +599,11 @@ export default {
 }
 
 .comment-content:focus,
-.comment-modify-content:focus{
+.comment-modify-content:focus {
   outline: none;
 }
 
-.board-btn{
+.board-btn {
   padding: 0px 15px;
 }
 

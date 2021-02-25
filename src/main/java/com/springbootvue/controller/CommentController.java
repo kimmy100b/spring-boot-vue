@@ -20,10 +20,10 @@ public class CommentController {
 
     @GetMapping("/getCommentList")
     public List<CommentDTO> getCommentList(
-            @RequestParam(value = "gubun") Integer gubun,
-            @RequestParam(value = "fkId") Integer fkId){
+            @RequestParam(value = "postType") String postType,
+            @RequestParam(value = "postId") Integer postId){
 
-        return commentService.getCommentList(gubun, fkId);
+        return commentService.getCommentList(postType, postId);
     }
 
     @PostMapping("/addComment")
@@ -41,18 +41,16 @@ public class CommentController {
     @DeleteMapping("/deleteComment")
     public void deleteComment(
             @RequestParam(value = "cid") Integer cid,
-            @RequestParam(value = "fkId") Integer fkId){
+            @RequestParam(value = "postId") Integer postId){
 
-        commentService.deleteComment(cid, fkId);
+        commentService.deleteComment(cid, postId);
     }
 
     @GetMapping("/getCntComment")
     public int getCommentCnt(
-            @RequestParam(value = "gubun") Integer gubun,
-            @RequestParam(value = "fkId") Integer fkId){
+            @RequestParam(value = "postType") String postType,
+            @RequestParam(value = "postId") Integer postId){
 
-        return commentService.getCntComment(gubun, fkId);
+        return commentService.getCntComment(postType, postId);
     }
-
-
 }

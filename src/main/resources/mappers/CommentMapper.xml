@@ -4,27 +4,31 @@
 
 <mapper namespace="com.springbootvue.dao.CommentDAO">
     <!--    댓글 목록-->
-    <select id="getCommentList" parameterType="Integer" resultType="com.springbootvue.dto.CommentDTO">
+    <select id="getCommentList" resultType="com.springbootvue.dto.CommentDTO">
         SELECT *
         FROM comment
-        WHERE gubun = #{gubun} and fk_id = #{fkId}
+        WHERE post_type = #{postType}
+          AND post_id = #{postId}
         ORDER BY reg_date ASC
     </select>
 
     <!--   댓글 작성 -->
     <insert id="addComment" parameterType="com.springbootvue.dto.CommentDTO">
-        INSERT INTO comment(gubun, fk_id, level, parent_id,
-                     writer, content, reg_date)
-        VALUES(#{gubun}, #{fkId}, #{level}, #{parentId},
-               #{writer}, #{content}, utc_timestamp)
+        INSERT INTO comment(post_type, post_id, level, parent_id,
+        writer, content, reg_date)
+        VALUES(#{postType}, #{postId}, #{level}, #{parentId},
+                                #{writer}, #{content}, utc_timestamp)
     </insert>
 
     <!--   댓글 수정 -->
     <update id="modifyComment">
         UPDATE comment
-        SET writer = #{writer},
-            content = #{content}, mod_date = utc_timestamp
-        WHERE gubun = #{gubun} and fk_id = #{fkId} and c_id = #{cid}
+        SET writer   = #{writer},
+            content  = #{content},
+            mod_date = utc_timestamp
+        WHERE post_type = #{postType}
+          AND post_id = #{postId}
+          AND c_id = #{cid}
     </update>
 
     <!--    댓글 삭제-->
@@ -33,18 +37,18 @@
         FROM comment
         WHERE c_id = #{cid}
     </delete>
-
     <!--    게시물 삭제 시 댓글 삭제-->
     <delete id="deleteCommentByBoard">
         DELETE
         FROM comment
-        WHERE fk_id = #{fkId}
+        WHERE post_id = #{postId}
     </delete>
 
     <!--    댓글 전체 개수-->
     <select id="getCntComment" resultType="Integer">
         SELECT COUNT(*) AS cnt
         FROM comment
-        WHERE gubun = #{gubun} and fk_id = #{fkId}
+        WHERE post_type = #{postType}
+          and post_id = #{postId}
     </select>
 </mapper>

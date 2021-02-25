@@ -3,57 +3,75 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.springbootvue.dao.BoardDAO">
-    <!--    게시판 목록-->
-    <select id="getBoardList" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
-        SELECT b_id, writer, title, content, views,
-               thumb_up, reg_date, mod_date, @ROWNUM := @ROWNUM+1 AS rowNum,
+    <!--  게시판 목록  -->
+    <select id="selectBoardList" resultType="com.springbootvue.dto.BoardDTO">
+        SELECT b_id,
+               writer,
+               title,
+               content,
+               views,
+               thumb_up,
+               reg_date,
+               mod_date,
+               @ROWNUM := @ROWNUM + 1 AS rowNum,
                (SELECT count(*)
                 FROM comment c
-                WHERE c.fk_id = b_id and c.gubun = 1)
-                AS cnt_comment
-        FROM board, (SELECT @ROWNUM := 0) AS R
-        ORDER BY
-            ifnull(mod_date, reg_date) DESC
+                WHERE c.post_id = b_id
+                  and c.post_type = 'board') AS cnt_comment
+        FROM board,
+             (SELECT @ROWNUM := 0) AS R
+        ORDER BY ifnull(mod_date, reg_date) DESC
         LIMIT #{startIndex}, #{pageSize}
     </select>
 
-    <!--    게시판 글쓰기-->
-    <insert id="addBoard" parameterType="com.springbootvue.dto.BoardDTO">
+    <!-- 게시판 등록하기 -->
+    <insert id="insertBoardInfo" parameterType="com.springbootvue.dto.BoardDTO">
         INSERT INTO board(writer, title, content, reg_date)
-        VALUES(#{writer}, #{title}, #{content}, utc_timestamp)
+        VALUES (#{writer}, #{title}, #{content}, utc_timestamp)
     </insert>
 
-    <!--    게시판 수정 기능-->
-    <update id="modifyBoard" parameterType="com.springbootvue.dto.BoardDTO">
+    <!-- 게시판 수정 기능 -->
+    <update id="updateBoardInfo" parameterType="com.springbootvue.dto.BoardDTO">
         UPDATE board
-        SET writer = #{writer}, title = #{title}, content = #{content}, mod_date = utc_timestamp
+        SET writer = #{writer},
+            title = #{title},
+            content = #{content},
+            mod_date = utc_timestamp
         WHERE b_id = #{bid}
     </update>
 
-    <!--    게시판 상세보기-->
-    <select id="getBoardInfo" parameterType="int" resultType="com.springbootvue.dto.BoardDTO">
+    <!-- 게시판 상세보기 -->
+    <select id="selectBoardInfo" parameterType="Integer" resultType="com.springbootvue.dto.BoardDTO">
         SELECT *
         FROM board
         WHERE b_id = #{bid}
     </select>
 
-    <!--    게시판 삭제 -->
-    <delete id="deleteBoard" parameterType="int">
+
+
+    <!-- 게시판 삭제 -->
+    <delete id="deleteBoard" parameterType="Integer">
         DELETE
         FROM board
         WHERE b_id = #{bid}
     </delete>
 
-    <!--    게시판 조회수-->
-    <update id="increaseBoardViews" parameterType="int">
+    <!-- 게시판 조회수 -->
+    <update id="updateBoardViews" parameterType="Integer">
         UPDATE board
         SET views = views + 1
         WHERE b_id = #{bid}
     </update>
 
-    <!--    전체 게시물 수-->
+    <!-- 전체 게시물 수 -->
     <select id="selectBoardListCnt" resultType="Integer">
         SELECT COUNT(*) AS listCnt
+        FROM board
+    </select>
+
+    <!-- 게시판 nid 가져오기 -->
+    <select id="selectMaxBoardBid" resultType="Integer">
+        SELECT MAX(b_id)
         FROM board
     </select>
 </mapper>

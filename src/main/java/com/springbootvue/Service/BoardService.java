@@ -2,6 +2,7 @@ package com.springbootvue.Service;
 
 import com.springbootvue.dto.BoardDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -10,10 +11,10 @@ public interface BoardService {
     List<BoardDTO> getBoardList(int startIndex, int pageSize);
 
     // 게시물 글쓰기 기능
-    void addBoard(BoardDTO boardDTO);
+    void addBoard(BoardDTO boardDTO) throws IOException;
 
     // 게시물 수정 기능
-    void modifyBoard(BoardDTO boardDTO);
+    void modifyBoard(BoardDTO boardDTO) throws IOException;
     
     // 게시물 상세보기
     BoardDTO getBoardInfo(int bid);

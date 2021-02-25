@@ -249,8 +249,7 @@ export default {
     getFileSize (size) {
       if (size) {
         return FileUtil.getFileSize(size)
-      }
-    },
+      }    },
     async save () {
       // tiptap content 유효성 검사
       // tiptap은 input 형식이 아니라 vee-validate 로 거를 수 없어 따로 추가함

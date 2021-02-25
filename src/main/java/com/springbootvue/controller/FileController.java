@@ -35,6 +35,7 @@ public class FileController {
         @RequestParam(value = "type") String postType,
         @RequestParam(value = "id") Integer id
     ) {
+
         return fileService.getFileList(postType, id);
     }
 
