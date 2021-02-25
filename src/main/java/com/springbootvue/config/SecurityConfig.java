@@ -1,6 +1,6 @@
 package com.springbootvue.config;
 
-import com.springbootvue.Service.UserService;
+import com.springbootvue.Service.UserDetailsServiceCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +17,19 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserService userService;
+    private final UserDetailsServiceCustom userDetailsServiceCustom;
 
     @Autowired
-    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsServiceCustom userDetailsServiceCustom) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userService = userService;
+        this.userDetailsServiceCustom = userDetailsServiceCustom;
     }
 
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(UserService userService) {
+    public DaoAuthenticationProvider authenticationProvider(UserDetailsServiceCustom userDetailsServiceCustom) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userService);
+        authenticationProvider.setUserDetailsService(userDetailsServiceCustom);
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return authenticationProvider;
     }

@@ -5,8 +5,11 @@
 <mapper namespace="com.springbootvue.dao.CommentDAO">
     <!--    댓글 목록-->
     <select id="getCommentList" resultType="com.springbootvue.dto.CommentDTO">
-        SELECT *
-        FROM comment
+        SELECT *,
+               (SELECT u.img_url
+                FROM user u
+                WHERE u.id = c.writer ) AS imgUrl
+        FROM comment c
         WHERE post_type = #{postType}
           AND post_id = #{postId}
         ORDER BY reg_date ASC
@@ -37,6 +40,7 @@
         FROM comment
         WHERE c_id = #{cid}
     </delete>
+
     <!--    게시물 삭제 시 댓글 삭제-->
     <delete id="deleteCommentByBoard">
         DELETE

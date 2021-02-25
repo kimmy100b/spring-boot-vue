@@ -9,7 +9,6 @@
             enctype="multipart/form-data"
             @submit.stop.prevent="handleSubmit(onSubmit)"
         >
-          <!--        TODO : 삭제(회원가입기능)-->
           <validation-provider
             name="작성자"
             :rules="{ required: true }"
@@ -21,6 +20,7 @@
                 v-model="board.writer"
                 :state="getValidationState(validationContext)"
                 placeholder="이름을 입력해 주세요."
+                disabled
               >{{ board.writer }}
               </b-form-input>
               <b-form-invalid-feedback>
@@ -29,13 +29,12 @@
             </b-form-group>
           </validation-provider>
 
-          <!--        TODO : 라벨제외-->
           <validation-provider
             name="제목"
             :rules="{ required: true, max: 25 }"
             v-slot="validationContext"
           >
-            <b-form-group id="board-title" label="제목 : " label-for="input-title">
+            <b-form-group id="board-title" label="제목 : ">
               <b-form-input
                 id="board-title"
                 name="title"
@@ -50,7 +49,7 @@
             </b-form-group>
           </validation-provider>
 
-          <b-form-group id="board-content" label="내용 : " label-for="input-content">
+          <b-form-group id="board-content" label="내용 : ">
               <span v-if="! isContentValid" class="content-feedback">
                 내용 항목은 필수 정보입니다
               </span>
@@ -144,6 +143,7 @@ import NabBar from '../NavBar'
 import Spinner from '../Spinner'
 import TiptapEditor from '../TiptapEditor.vue'
 import * as FileUtil from '../../common/FileUtil.js'
+import store from "@/store";
 
 const POST_TYPE = 'board'
 const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -165,13 +165,16 @@ export default {
       isUploading: false,
       isContentValid: false,
       board: {
-        write: undefined,
+        writer: undefined,
         title: undefined,
         content: undefined,
         files: undefined // 추가할 첨부파일
       },
       originFiles: [] // 기존에 있는 첨부파일
     }
+  },
+  created() {
+    this.board.writer = store.getters.getUserId
   },
   computed: {
     showModal: {

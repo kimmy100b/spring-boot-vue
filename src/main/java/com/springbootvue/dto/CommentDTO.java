@@ -37,4 +37,7 @@ public class CommentDTO {
 
     /** 총 댓글 수 **/
     private int cnt;
+
+    /** 작성자 프로필 URL **/
+    private String imgUrl;
 }

@@ -218,6 +218,7 @@ export default {
       let formData = new FormData()
       formData.append('title', this.notice.title)
       formData.append('content', this.$refs.tiptapEditor.content)
+      formData.append('writer',this.$store.getters.getUserId)
 
       if (this.notice.files) {
         for (const file of this.notice.files) {

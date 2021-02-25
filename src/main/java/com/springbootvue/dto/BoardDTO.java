@@ -51,4 +51,6 @@ public class BoardDTO {
     /** 게시판 index - bid는 PK **/
     private int rowNum;
 
+    /** 작성자 프로필 URL **/
+    private String imgUrl;
 }

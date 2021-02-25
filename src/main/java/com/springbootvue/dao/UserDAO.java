@@ -23,4 +23,7 @@ public interface UserDAO {
 
     /** 권한 FK번호 찾기 **/
     Integer selectRoleSid(@Param("roleName") String roleName);
+    
+    /** 로그인 - 사용자 정보 찾기 **/
+    UserDTO selectUserInfo(@Param("id") String id);
 }

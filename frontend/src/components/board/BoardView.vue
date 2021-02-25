@@ -9,7 +9,11 @@
           </div>
 
           <div class="board-info">
-            <b-avatar src="https://doozi316.github.io/assets/images/me.png" size="4rem"></b-avatar>
+            <b-avatar
+                :src="boardView.imgUrl"
+                variant="secondary"
+                size="4rem"
+            ></b-avatar>
             <div class="board-info-text">
               <h5>{{ boardView.writer }}</h5>
               <div class="info-date-view">
@@ -31,7 +35,6 @@
           >
           </div>
           <div class="board-icons">
-            <!--            TODO : 회원 기능 후-->
             <font-awesome-icon
                 :icon="[ thumbIcon,'thumbs-up']"
                 class="icon-thumb board-icon"
@@ -67,7 +70,10 @@
                   :key="idx"
                   class="comment-li"
               >
-                <b-avatar src="https://doozi316.github.io/assets/images/me.png" size="3rem"></b-avatar>
+                <b-avatar
+                    :src="commentItem.imgUrl"
+                    variant="secondary"
+                    size="3rem"></b-avatar>
                 <div class="comment-item">
                   <div class="comment-item-writer">
                     <span>{{ commentItem.writer }}</span>
@@ -83,11 +89,14 @@
                     <div class="comment-item-info">
                       {{ dateFormatter(commentItem.regDate) }}
                       <span class="comment-item-info-modify">답글쓰기</span>
-                      <!--                    TODO : 권한자만 볼 수 있게(회원가입)-->
-                      <div class="comment-item-btn">
+
+                      <div
+                          v-if="commentItem.writter === loggedUser.id "
+                          class="comment-item-btn"
+                      >
                         <span
                             @click="openEditor(idx)"
-                            class="comment-btn-modify"
+                            class="comment-item-btn-modify"
                         >
                           수정
                         </span>
@@ -134,11 +143,11 @@
                 <!--  end comment-item -->
               </li>
             </ul>
-            <b-form class="form-comment">
-              <!--                TODO : 작성자 변경-->
-              <span
-              >신윤정</span>
-              <!--                  v-model="comment.writer"-->
+            <b-form
+                v-if="loggedUser.id !== '' && loggedUser.id !== null"
+                class="form-comment"
+            >
+              <span>{{ comment.writer }}</span>
               <textarea
                   placeholder="댓글을 입력하세요"
                   rows="1"
@@ -166,7 +175,10 @@
                 <b-button variant="secondary" size="sm">목록</b-button>
               </router-link>
             </b-col>
-            <b-col class="btn-row text-right">
+            <b-col
+                v-if="boardView.writer === loggedUser.id "
+                class="btn-row text-right"
+            >
               <router-link :to="{ name: 'BoardModify', params: { bid: bid } }">
                 <b-button
                     class="board-btn-modify"
@@ -209,6 +221,7 @@ import NavBar from '../NavBar'
 import Spinner from '../Spinner.vue'
 import * as DateUtil from '../../common/DateUtil.js'
 import * as FileUtil from '../../common/FileUtil.js'
+import store from "@/store";
 
 const POST_TYPE = 'board'
 
@@ -221,6 +234,9 @@ export default {
   data () {
     return {
       isLoading: false,
+      loggedUser: {
+        id: undefined
+      },
       boardView: [],
       cntComment: 0,
       isModifyComment: false,
@@ -228,6 +244,8 @@ export default {
       thumbIcon: 'far',
       fileList: [],
       comment: {
+        writer: undefined,
+        imgUrl: undefined,
         content: undefined
       },
       modifyComment: {
@@ -244,6 +262,8 @@ export default {
     await this.setBoardFiles()
     await this.setCommentList()
     await this.setCntComment()
+    this.loggedUser.id = store.getters.getUserId
+    this.comment.writer = this.loggedUser.id // 댓글 작성자 = 현재 로그인
   },
   methods: {
     dateFormatter (date) {
@@ -338,6 +358,7 @@ export default {
           cid: r.cid,
           postId: r.postId,
           writer: r.writer,
+          imgUrl: r.imgUrl,
           content: r.content.replace(/(?:\r\n|\r|\n)/g, '<br />'),
           regDate: r.regDate
         }))
@@ -399,7 +420,7 @@ export default {
         let data = {
           postType: POST_TYPE,
           postId: this.bid,
-          writer: '신윤정'
+          writer: this.comment.writer
         }
         if (this.isModifyComment) {
           data = Object.assign(data, {
@@ -478,7 +499,7 @@ export default {
 
 .board-icon,
 .board-btn-modify,
-.comment-btn-modify {
+.comment-item-btn-modify {
   margin-right: 5px;
 }
 
@@ -486,7 +507,6 @@ export default {
   margin-left: 10px;
 }
 
-/* TODO : 엄지척 넣고 디자인 수정하기 */
 @keyframes thumbSize {
   0% {
     transform: scale(1, 1);

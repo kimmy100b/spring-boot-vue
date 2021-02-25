@@ -42,12 +42,13 @@
 
     <!-- 게시판 상세보기 -->
     <select id="selectBoardInfo" parameterType="Integer" resultType="com.springbootvue.dto.BoardDTO">
-        SELECT *
-        FROM board
+        SELECT *,
+               (SELECT img_url
+                FROM user
+                WHERE id = b.writer ) AS imgUrl
+        FROM board b
         WHERE b_id = #{bid}
     </select>
-
-
 
     <!-- 게시판 삭제 -->
     <delete id="deleteBoard" parameterType="Integer">
