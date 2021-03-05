@@ -33,6 +33,9 @@ public class UserDTO {
     /** 사용자 이메일 **/
     private String email;
 
+    /** 사용자 프로필 URL **/
+    private String imgUrl;
+
     /** 회원가입일 **/
     private Timestamp regDate;
 

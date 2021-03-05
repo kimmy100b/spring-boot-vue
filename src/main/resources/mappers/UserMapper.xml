@@ -6,7 +6,7 @@
 
     <!-- 회원정보 -->
     <select id="selectUsers" resultType="com.springbootvue.dto.UserDTO">
-        SELECT u.pwd , u.name, r.role_name
+        SELECT u.pwd, u.name, r.role_name
         FROM user AS u
                  INNER JOIN user_role AS ur
                             ON u.u_id = ur.user_id
@@ -15,16 +15,16 @@
         WHERE u.id = #{id}
     </select>
 
-    <!-- 회원가입 - 회원정보 저장 -->
+    <!-- 회원가입 : 회원정보 저장 -->
     <insert id="insertUserInfo">
         INSERT INTO user(id, pwd, name, birth_date, gender, tel, email, reg_date)
-        VALUES(#{id}, #{pwd}, #{name}, #{birthDate}, #{gender}, #{tel}, #{email}, utc_timestamp )
+        VALUES (#{id}, #{pwd}, #{name}, #{birthDate}, #{gender}, #{tel}, #{email}, utc_timestamp)
     </insert>
 
-    <!-- 회원가입 - 회원 권한 저장 -->
+    <!-- 회원가입 : 회원 권한 저장 -->
     <insert id="insertUserRole">
         INSERT INTO user_role(user_id, role_id, reg_date)
-        VALUES(#{uid}, #{rid}, utc_timestamp )
+        VALUES (#{uid}, #{rid}, utc_timestamp)
     </insert>
 
     <!-- 회원 FK찾기 -->
@@ -41,4 +41,10 @@
         WHERE role_name = #{roleName}
     </select>
 
+    <!-- 로그인 : 사용자 정보 찾기 -->
+    <select id="selectUserInfo" resultType="com.springbootvue.dto.UserDTO">
+        SELECT *
+        FROM user
+        WHERE id = #{id}
+    </select>
 </mapper>

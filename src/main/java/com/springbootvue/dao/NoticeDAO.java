@@ -28,7 +28,8 @@ public interface NoticeDAO {
     // 공지사항 등록하기
     int addNotice(
         @Param("title") String title,
-        @Param("content") String content);
+        @Param("content") String content,
+        @Param("writer") String writer);
 
     // 공지사항 수정하기
     int editNotice(

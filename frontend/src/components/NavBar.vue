@@ -14,21 +14,29 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown right>
-            <template #button-content>
-              <span>로그인하세요</span>
-            </template>
-            <b-dropdown-item
-                :to="{ name: 'Login' }"
-            >
-              로그인
-            </b-dropdown-item>
-            <b-dropdown-item
-                :to="{ name: 'SignUp'}"
-            >
-              회원가입
-            </b-dropdown-item>
-          </b-nav-item-dropdown>
+          <div v-if="!this.$store.getters.isLoggedIn">
+            <b-nav-item-dropdown right>
+              <template #button-content>
+                <span>로그인하세요</span>
+              </template>
+              <b-dropdown-item
+                  :to="{ name: 'Login' }"
+              >
+                로그인
+              </b-dropdown-item>
+              <b-dropdown-item
+                  :to="{ name: 'SignUp'}"
+              >
+                회원가입
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </div>
+
+          <div v-else>
+            <b-nav-item @click="logOut">
+              로그아웃
+            </b-nav-item>
+          </div>
 
           <b-nav-form>
             <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
@@ -39,36 +47,44 @@
     </b-navbar>
   </div>
 </template>
-
 <script>
-
 export default {
   name: 'NavBar',
-  data () {
+  data() {
     return {
-      menus: []
+      menus: [],
+      isLogedIn : this.$store.getters.isLoggedIn
     }
   },
-  created () {
+  computed: {
+  },
+  created() {
     this.menus.push(
-      {
-        title: 'Home',
-        name: 'Index'
-      },
-      {
-        title: '하루공부',
-        name: 'BoardList'
-      },
-      {
-        title: '공지사항',
-        name: 'NoticeList'
-      }
+        {
+          title: 'Home',
+          name: 'Index'
+        },
+        {
+          title: '하루공부',
+          name: 'BoardList'
+        },
+        {
+          title: '공지사항',
+          name: 'NoticeList'
+        }
     )
   },
   methods: {
+    async logOut() {
+      try {
+        await this.$store.dispatch('logout')
+        await this.$router.push({ name: 'Index' })
+      } catch (err) {
+        throw new Error('로그아웃 실패')
+      }
+    }
   }
 }
 </script>
-
 <style scoped>
 </style>

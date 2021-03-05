@@ -55,7 +55,7 @@
         values (
             #{title},
             #{content},
-            '김현진',
+            #{writer},
             utc_timestamp()
         )
     </insert>

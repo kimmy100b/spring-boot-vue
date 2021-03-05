@@ -64,7 +64,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     @Override
     public void addNotice(NoticeDTO noticeDTO) throws IOException {
-        int cnt = noticeDAO.addNotice(noticeDTO.getTitle(), noticeDTO.getContent());
+        int cnt = noticeDAO.addNotice(noticeDTO.getTitle(), noticeDTO.getContent(), noticeDTO.getWriter());
         if (cnt != 1) {
             showMessageDialog(null, "등록에 실패하였습니다.");
         }

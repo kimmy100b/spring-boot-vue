@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 import static javax.swing.JOptionPane.showMessageDialog;
 
 @Service
-public class UserService implements UserDetailsService{
+public class UserDetailsServiceCustom implements UserDetailsService{
 
     /** 사용자 DAO **/
     final private UserDAO userDAO;
@@ -23,7 +25,7 @@ public class UserService implements UserDetailsService{
     final private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserService(UserDAO userDAO, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserDetailsServiceCustom(UserDAO userDAO, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDAO = userDAO;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -52,5 +54,26 @@ public class UserService implements UserDetailsService{
     public boolean chkDuplicatedId(String userId){
 
         return userDAO.selectUserSid(userId) == null ? false : true;
+    }
+
+    /** 로그인 기능 구현하기 **/
+    public UserDTO login(String inputId, String inputPwd){
+        UserDTO userDTO = userDAO.selectUserInfo(inputId);
+
+        if(userDTO == null){
+            return null; // 가입하지 않은 아이디입니다.
+        } else {
+            if(bCryptPasswordEncoder.matches(inputPwd, userDTO.getPwd())){
+                return userDTO; // 로그인 성공
+            } else {
+                return null; // 잘못된 비밀번호입니다.
+            }
+        }
+    }
+
+    /** 사용자ID로 회원정보 찾기 **/
+    public UserDTO getUserInfo(String userId) {
+
+        return userDAO.selectUserInfo(userId);
     }
 }
