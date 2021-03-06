@@ -1,6 +1,10 @@
 <template>
   <div>
     <navBar></navBar>
+    <img
+        class="main-img"
+        src="@/assets/images/main/main.jpg"
+    >
   </div>
 </template>
 
@@ -14,14 +18,17 @@ export default {
   },
   data () {
     return {
+
     }
   },
-  created () {
-  },
   methods: {
+
   }
 }
 </script>
 
 <style scoped>
+.main-img {
+  width: 100%;
+}
 </style>
